@@ -1,0 +1,13 @@
+.btntheme1 {
+  width: 100%;
+  height: 60px;
+  background: #2F620B;
+  border: none;
+  border-radius: 10px;
+  color: #FAF0D1;
+  font-size: 18px;
+}
+.btntheme1 img {
+  height: auto;
+  width: 40px;
+}
