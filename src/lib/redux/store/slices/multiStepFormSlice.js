@@ -18,14 +18,12 @@ const multiStepFormSlice = createSlice({
     },
 
     updateForm: (state, action) => {
-      // console.log("action:", action.payload);
       state.profileData = {
         ...state.profileData, // Keep existing profileData
         ...action.payload,   // Add/Update fields from the dispatched action
       };
     },
     updateShopData: (state, action) => {
-      // console.log("action:", action.payload);
       state.shopData = {
         ...state.shopData, // Keep existing profileData
         ...action.payload,   // Add/Update fields from the dispatched action

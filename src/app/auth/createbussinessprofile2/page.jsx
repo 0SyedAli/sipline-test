@@ -21,7 +21,7 @@ export default function CreateBusinessProfilePage2() {
   const router = useRouter(); // Initialize router
   const header = useHeader();
   const formData = useSelector((state) => state.multiStepForm);
-  console.log(formData);
+  
   const handleCategoryAdd = () => {
     if (tag && !selectedCategories.includes(tag)) {
       setSelectedCategories((prev) => [...prev, tag]);

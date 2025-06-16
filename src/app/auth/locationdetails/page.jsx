@@ -93,8 +93,6 @@ export default function LocationDetail() {
   // };
 
   const formData = useSelector((state) => state.multiStepForm);
-  console.log("adminId:", adminId);
-
 
   const handleNext = async () => {
     if (!country || !city || !state || !postalCode) {
@@ -163,7 +161,6 @@ export default function LocationDetail() {
         setError(result?.message || "Invalid data received");
       }
 
-      console.log("API Response:", result);
     } catch (err) {
       // General error handling
       console.error("API Error:", err);

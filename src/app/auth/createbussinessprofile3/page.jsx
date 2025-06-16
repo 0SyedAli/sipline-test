@@ -17,7 +17,7 @@ export default function CreateBusinessProfilePage3() {
   const header = useHeader();
   const [adminId, setAdminId] = useState("");
   const formData = useSelector((state) => state.multiStepForm);
-  console.log(formData);
+  
 
   useEffect(() => {
     const adminData = sessionStorage.getItem("admin");

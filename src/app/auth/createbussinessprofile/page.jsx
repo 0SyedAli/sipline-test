@@ -26,7 +26,6 @@ export default function CreateBusinessProfilePage() {
       setShopImage(base64Image);
     }
   };
-console.log(shopImage);
 
   const handleNext = () => {
     if (!shopImage?.fileName || !postalCode || !selectedCookingTimeId) {

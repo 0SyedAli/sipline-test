@@ -104,7 +104,7 @@ const Discounts = () => {
       </div>
 
       {loading ? (
-        <div className="main_dash2">
+        <div className="">
           <SpinnerLoading />
         </div>
       ) : error ? (

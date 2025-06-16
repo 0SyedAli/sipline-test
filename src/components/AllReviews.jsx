@@ -18,7 +18,7 @@ const AllReviews = ({ limit = null }) => {
     // Fetch admin and shop data on mount
     useEffect(() => {
         const adminData = JSON.parse(sessionStorage.getItem("admin"));
-        if (adminData?.shopId && adminData?._id) {
+        if (adminData?._id) {
             setAdminId(adminData._id);
             setShopId(adminData.shopId);
         } else {
@@ -89,7 +89,7 @@ const AllReviews = ({ limit = null }) => {
     const displayedReviews = limit ? reviews.slice(0, limit) : reviews;
 
     return (
-        <div>
+        <div className="page product_tab">
             {loading ? (
                 <SpinnerLoading />
             ) : (

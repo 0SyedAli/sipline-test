@@ -123,7 +123,6 @@ export const AddNewProduct = ({ title, btntitle }) => {
       // Handle validation or request errors
       setError(error?.response?.data?.msg || error?.message);
       toast.error(response?.data?.msg || "Signup successful!");
-      console.log("avs")
       setSuccess(false);
       setIsLoading(false); // Re-enable button on error
     } finally {

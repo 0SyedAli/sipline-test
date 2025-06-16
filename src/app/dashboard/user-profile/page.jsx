@@ -10,8 +10,10 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import AllReviews from "@/components/AllReviews";
 import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
+import Image from "next/image";
+import axios from "axios";
 const user_cover = "/images/userCover.jpg";
-const customer = "/images/user_demo.png";
+const customer = "/images/default-avatar.png";
 const edit_icon = "/images/edit_icon.png";
 
 const UserProfile = () => {
@@ -19,19 +21,23 @@ const UserProfile = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [adminId, setAdminId] = useState("");
+  const [adminData, setAdminData] = useState("");
   const [shopId, setShopId] = useState("");
   const router = useRouter();
   const [products, setProducts] = useState([]);
+  const [shopData, setShopData] = useState([]);
   const [workingDays, setWorkingDays] = useState([]);
   const [workStartTime, setWorkStartTime] = useState("");
   const [workEndTime, setWorkEndTime] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(""); // Store only one error at a time
+  console.log(shopData);
 
   useEffect(() => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (adminData && adminData?._id && adminData?.shopId) {
       setAdminId(adminData?._id);
+      setAdminData(adminData);
       setShopId(adminData?.shopId);
     } else {
       console.error("User not found or missing '_id' property");
@@ -42,6 +48,7 @@ const UserProfile = () => {
   useEffect(() => {
     if (adminId) {
       getProducts();
+      getShop(); // Call the function on component mount
     }
   }, [adminId]);
 
@@ -121,8 +128,6 @@ const UserProfile = () => {
     }
   };
 
-
-
   const getProducts = async () => {
     const token = sessionStorage.getItem("token");
 
@@ -163,21 +168,85 @@ const UserProfile = () => {
     }
   };
 
+  const getShop = async () => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) {
+      setError("Missing authentication details. Please log in again.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/getShopByAdminId?adminId=${adminId}`,
+      );
+      if (response?.data?.success) {
+        setShopData(response.data.data.workingDays || []);
+      } else {
+        console.error("Failed to fetch shop data");
+      }
+    } catch (error) {
+      console.error("Error fetching shop data:", error);
+    }
+  };
+
+  // const getShop = async () => {
+  //   const token = sessionStorage.getItem("token");
+
+  //   if (!token) {
+  //     setError("Missing authentication details. Please log in again.");
+  //     setLoading(false);
+  //     return;
+  //   }
+
+  //   try {
+  //     setError(null);
+  //     setLoading(true);
+
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}admin/getAllProducts?adminId=${adminId}`,
+  //       {
+  //         method: "GET",
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+
+  //     if (data.success) {
+  //       toast.success("Products fetched successfully!");
+  //       setProducts(data.data);
+  //     } else {
+  //       throw new Error(data.msg || "Failed to fetch products.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //     setError(error.message || "Failed to load products. Please try again later.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   return (
     <div className="page">
       <div className="user_banner mt-5">
         <div className="up_upload">
           <div className="up_cover">
             <img src={user_cover} alt="" />
-            <div className="up_upload_btn">
+            {/* <div className="up_upload_btn">
               <FaPlus />
-            </div>
+            </div> */}
           </div>
           <div className="user_profile">
-            <img src={customer} alt="" />
-            <div className="up_upload_btn">
+            {console.log(process.env.NEXT_PUBLIC_IMAGE_URL + adminData?.profileImage)}
+            <Image width={126} height={126} src={adminData?.profileImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${adminData?.profileImage}` : customer} alt="" />
+            {/* <div className="up_upload_btn">
               <FaPlus />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -186,13 +255,13 @@ const UserProfile = () => {
           <div className="col-9">
             <h4>
               <FaStar />
-              4.7 | Rating
+              0.0 | Rating
             </h4>
             <div className="up_heading d-flex align-items-center gap-3">
-              <h3>Neon Night Bar </h3>
-              <button className="border-0 bg-transparent">
+              <h3>{adminData?.fullName || "Unknown"}</h3>
+              {/* <button className="border-0 bg-transparent">
                 <img src={edit_icon} alt="" />
-              </button>
+              </button> */}
             </div>
             <h4 className="mb-0">927 Hornblend Street, San Diego, 92109</h4>
 
@@ -415,17 +484,34 @@ const UserProfile = () => {
             <div className="about_sec">
               <h4>About</h4>
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry.
-              </p>
-              <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry.
+                {adminData?.bio  || "No Data"}
               </p>
             </div>
             <div className="up_timing">
+
+              {shopData.length > 0 ? (
+                shopData.map((day, index) => (
+                  <div
+                    className="d-flex align-items-center justify-content-between"
+                    key={index}
+                  >
+                    <h4>{day.day}</h4>
+                    <h4>
+                      {day.isActive ? (
+                        <span>
+                          {day.openingTime} - {day.closeingTime}
+                        </span>
+                      ) : (
+                        <span>Closed</span>
+                      )}
+                    </h4>
+                  </div>
+                ))
+              ) : (
+                <p>No working days available</p>
+              )}
+            </div>
+            {/* <div className="up_timing">
               <div className="d-flex align-items-center justify-content-between">
                 <h4>Sun</h4>
                 <h4>
@@ -468,7 +554,7 @@ const UserProfile = () => {
                   <span>10 : 00 AM - 05 : 00 PM</span>
                 </h4>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

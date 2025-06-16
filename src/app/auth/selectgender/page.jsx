@@ -80,7 +80,6 @@ export default function GenderSelectionPage() {
   //   }
   // };
   const formData = useSelector((state) => state);
-  console.log("formData:" ,formData);
   
   const handleNext = () => {
     if (!gender || !phone || !bio) {
