@@ -9,6 +9,17 @@ const SideBar = () => {
   const router = useRouter(); // Initialize the useRouter hook
   const [activeTab, setActiveTab] = useState(pathname);
   const [loading, setLoading] = useState(false); // New loading state
+  const [adminData, setAdminData] = useState(false); // New loading state
+  const customer = "/images/default-avatar.png";
+  useEffect(() => {
+    const adminData = JSON.parse(sessionStorage.getItem("admin"));
+    if (adminData && adminData?._id) {
+      setAdminData(adminData);
+    } else {
+      console.error("User not found or missing '_id' property");
+      router.push("/auth/login");
+    }
+  }, [router]);
   const navigationRouters = [
     {
       href: "/dashboard",
@@ -101,9 +112,9 @@ const SideBar = () => {
             <Image
               width={40}
               height={40}
-              src="/images/user1.png"
+              src={adminData?.profileImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${adminData?.profileImage}` : customer}
               alt="User Avatar" />
-            <p>John Smith</p>
+            <p>{adminData?.fullName || "Unknown"}</p>
           </div>
         </Link>
       </div>

@@ -1,51 +1,93 @@
 "use client";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import InputField from "@/components/Form/InputField";
 import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
 import { useRouter } from "next/navigation";
-import UploadPhoto from "@/components/UploadPhoto";
 import { useHeader } from "@/components/context/HeaderContext";
-import { updateForm } from "../../../lib/redux/store/slices/multiStepFormSlice";
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
+import UploadImage from "@/components/UploadImage";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 const profileImg = "/images/profile.png";
+const defaultProfileImage = "/images/default-avatar.png";
 
 export default function CreateProfilePage() {
   const header = useHeader();
   const router = useRouter();
-  const dispatch = useDispatch();
   const [fullName, setFullName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState({
     day: "",
     month: "",
     year: "",
   });
-  const [image, setImage] = useState({ base64Image: "", fileName: null });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Loading state
-  const handleImageChange = (base64Image) => {
-    setImage(base64Image);
+  const [isLoading, setIsLoading] = useState(false);
+  const [adminId, setAdminId] = useState("");
+  const [imageFile, setImageFile] = useState("");
+  const [existingImage, setExistingImage] = useState(defaultProfileImage);
+
+  useEffect(() => {
+    const adminData = sessionStorage.getItem("admin");
+
+    if (adminData) {
+      try {
+        const AdminData = JSON.parse(adminData);
+        setAdminId(AdminData._id);
+
+        // Set the existing profile image if available
+        const profileImagePath = AdminData.profileImagePath || defaultProfileImage;
+        setExistingImage(`${process.env.NEXT_PUBLIC_IMAGE_URL}${profileImagePath}`);
+      } catch (error) {
+        console.error("Error parsing admin data from sessionStorage:", error);
+      }
+    } else {
+      router.replace("/auth/login"); // Redirect if no admin data
+    }
+  }, []);
+
+  const handleFileChange = (file) => {
+    setImageFile(file);
+    setExistingImage(URL.createObjectURL(file)); // Update the preview image dynamically
   };
-  const handleNext = () => {
-    if (!image.fileName || !fullName || !dateOfBirth.day || !dateOfBirth.month || !dateOfBirth.year) {
+
+  const handleNext = async () => {
+    if (!imageFile || !fullName || !dateOfBirth.day || !dateOfBirth.month || !dateOfBirth.year) {
       setError("All fields are required.");
-      setIsLoading(false)
-      setSuccess(false)
+      setIsLoading(false);
+      setSuccess(false);
       return;
     }
-    setIsLoading(true)
-    setSuccess(true)
+
+    setIsLoading(true);
+    setError(null);
+    setSuccess(false);
+
     const dob = `${dateOfBirth.day.padStart(2, "0")}-${dateOfBirth.month.padStart(2, "0")}-${dateOfBirth.year}`;
+    const formData = new FormData();
+    formData.append("adminId", adminId);
+    formData.append("fullName", fullName);
+    formData.append("DOB", dob);
+    formData.append("profilePath", "auth/addlocation");
+    if (imageFile) {
+      formData.append("adminProfile", imageFile);
+    }
 
-    dispatch(updateForm({
-      profile_image: image.fileName,
-      full_name: fullName,
-      date_of_birth: dob,
-    }));
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateAdmin`, formData);
 
-    router.push("selectgender"); // move to next page
+      if (response.status === 200) {
+        setSuccess(true);
+        router.push("selectgender");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating admin profile:", error);
+      setError(error.response?.data?.message || "An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -60,7 +102,10 @@ export default function CreateProfilePage() {
           </div>
           <form>
             <fieldset>
-              <UploadPhoto onImageUpload={handleImageChange} />
+              <UploadImage
+                onFileChange={handleFileChange}
+                existingImage={existingImage}
+              />
               <label htmlFor="fullName">Full Name</label>
               <InputField
                 type="text"
@@ -77,7 +122,7 @@ export default function CreateProfilePage() {
                     placeholder="dd"
                     value={dateOfBirth.day}
                     onChange={(e) => {
-                      const value = e.target.value.slice(0, 2); // Limit to 2 characters
+                      const value = e.target.value.slice(0, 2);
                       setDateOfBirth({ ...dateOfBirth, day: value });
                     }}
                     max={2}
@@ -88,7 +133,7 @@ export default function CreateProfilePage() {
                     value={dateOfBirth.month}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 2);
-                      setDateOfBirth({ ...dateOfBirth, month: value })
+                      setDateOfBirth({ ...dateOfBirth, month: value });
                     }}
                     max={2}
                   />
@@ -98,7 +143,7 @@ export default function CreateProfilePage() {
                     value={dateOfBirth.year}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 4);
-                      setDateOfBirth({ ...dateOfBirth, year: value })
+                      setDateOfBirth({ ...dateOfBirth, year: value });
                     }}
                   />
                 </div>

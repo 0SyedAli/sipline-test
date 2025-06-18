@@ -2,7 +2,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import AddNow from "./Modal/AddNow";
 import Image from "next/image";
 
-const ProductCards = ({ name, price, stockQuantity, image }) => {
+const ProductCards = ({ name, price, stockQuantity, productId, image , btntitle }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -16,24 +16,11 @@ const ProductCards = ({ name, price, stockQuantity, image }) => {
       </div>
       <div className="product_bottom gap-2">
       <h4>{name}</h4>
-        {/* <div className="form-check form-switch">
-          <label className="form-check-label" htmlFor={`stockSwitch-${name}`}>
-            In Stock
-          </label>
-          <input
-            className="form-check-input"
-            type="checkbox"
-            role="switch"
-            id={`stockSwitch-${name}`}
-            defaultChecked={stockQuantity > 0}
-          />
-        </div> */}
-
         <button type="button" className="border-0 bg-transparent" onClick={onOpen}>
           <Image width={23} height={23} src="/images/edit_icon.png" alt="Edit" />
         </button>
       </div>
-      <AddNow isOpen={isOpen} onClose={onClose} btntitle="Update" />
+      <AddNow productId={productId} isOpen={isOpen} onClose={onClose} btntitle={btntitle} />
     </div>
   );
 };

@@ -107,7 +107,9 @@ export default function CreateBusinessProfilePage3() {
       if (response.ok && result?.success) {
         toast.success(result?.msg || "Profile updated successfully!");
         setSuccess(true);
-        router.push("/dashboard");
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("admin");
+        router.push("login");
       } else {
         toast.error(result?.msg || "Invalid data received");
         setError(result?.msg || "Invalid data received");

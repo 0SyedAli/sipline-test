@@ -1,18 +1,15 @@
 "use client";
 import InputField from "@/components/Form/InputField";
-import { useDispatch, useSelector } from "react-redux";
 import { useHeader } from "@/components/context/HeaderContext";
 import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { updateForm } from "../../../lib/redux/store/slices/multiStepFormSlice";
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
 import { toast } from "react-toastify";
 
 export default function LocationDetail() {
   const header = useHeader();
   const router = useRouter();
-  const dispatch = useDispatch();
   const [country, setCountry] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -43,101 +40,24 @@ export default function LocationDetail() {
     setIsClient(true); // Mark as client-side rendering
   }, []);
 
-  // const handleLogin = async (e) => {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-  //   const requestData = {
-  //     country,
-  //     city,
-  //     state,
-  //     postal_code: postalCode,
-  //     latitude: 24.860735,
-  //     longitude: 67.001137,
-  //     location: "Saima Arabian Villas",
-  //   };
-
-  //   try {
-  //     await addLocationValidation.validate(requestData);
-  //     const response = await axios.post(
-  //       `${process.env.NEXT_PUBLIC_SERVER_URL}vendor/auth/add_location`,
-  //       requestData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-  //         },
-  //       }
-  //     );
-  //     if (response?.data?.code === 200) {
-
-  //       sessionStorage.setItem("step_after_login", "/auth/createbussinessprofile");
-  //       setSuccess(true);
-  //       setError(null);
-  //       router.push("/auth/createbussinessprofile");
-  //       sessionStorage.setItem("bar_id", response?.data?.data?.bar_id);
-  //       sessionStorage.setItem(
-  //         "cooking_range",
-  //         JSON.stringify(response?.data?.data?.cooking_time_ranges)
-  //       );
-  //     } else {
-  //       setError(response.data.message || "Request failed");
-  //       setSuccess(false);
-  //       setIsLoading(false);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     setError(error?.message || error?.response?.data?.message);
-  //     setSuccess(false);
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  const formData = useSelector((state) => state.multiStepForm);
-
-  const handleNext = async () => {
-    if (!country || !city || !state || !postalCode) {
-      setError("All fields are required.");
-      setIsLoading(false);
-      setSuccess(false);
-      return;
-    }
+  const handleNext = async (e) => {
+    e.preventDefault();
 
     setIsLoading(true);
-    setSuccess(true);
 
-    // 1. Dispatch current step to Redux
-    dispatch(updateForm({
-      country,
-      city,
-      state,
-      postal_code: postalCode,
-    }));
+    const apiPayload = new FormData();
+    apiPayload.append("adminId", adminId);
+    apiPayload.append("latitude", 24.860735);
+    apiPayload.append("longitude", 67.001137);
+    apiPayload.append("postalCode", postalCode);
+    apiPayload.append("country", country);
+    apiPayload.append("state", state);
+    apiPayload.append("city", city);
 
-    const apiPayload = {
-      adminId: adminId, // if you're storing it in Redux
-      fullName: formData?.full_name,
-      DOB: formData?.profileData?.date_of_birth,
-      gender: formData?.profileData?.gender,
-      phone: formData?.profileData?.phone,
-      bio: formData?.profileData?.bio,
-      latitude: 24.860735,
-      longitude: 67.001137,
-      locationName: formData?.profileData?.location_address,
-      postalCode: postalCode,
-      country: country,
-      state: state,
-      city: city,
-      ...(formData?.profileData?.profile_image && { adminProfile: formData?.profileData?.profile_image }),
-    };
-
-    // 3. Call the API
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateAdmin`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(apiPayload),
+        body: apiPayload,
       });
 
       // Check if the response status is OK
@@ -151,14 +71,15 @@ export default function LocationDetail() {
       // Handle success scenario
       if (result?.success) {
         setSuccess(true);
-        toast.success(result?.message || "Profile updated successfully!");
+        toast.success(result?.msg || "Profile updated successfully!");
         setError(null);
+        // sessionStorage.setItem("admin", JSON.stringify(result?.data));
         router.push("createbussinessprofile");
       } else {
         // Handle server-side failure
         setSuccess(false);
-        toast.error(result?.message || "Invalid data received");
-        setError(result?.message || "Invalid data received");
+        toast.error(result?.msg || "Invalid data received");
+        setError(result?.msg || "Invalid data received");
       }
 
     } catch (err) {
@@ -187,7 +108,7 @@ export default function LocationDetail() {
             <label htmlFor="country">Country</label>
             <InputField
               type="text"
-              placeholder="Pakistan"
+              placeholder="United States"
               id="country"
               classInput="classInput"
               value={country}
@@ -196,7 +117,7 @@ export default function LocationDetail() {
             <label htmlFor="city">City</label>
             <InputField
               type="text"
-              placeholder="Karachi"
+              placeholder="New york"
               id="city"
               classInput="classInput"
               value={city}
@@ -205,7 +126,7 @@ export default function LocationDetail() {
             <label htmlFor="state">State</label>
             <InputField
               type="text"
-              placeholder="Sindh"
+              placeholder="New York"
               id="state"
               classInput="classInput"
               value={state}

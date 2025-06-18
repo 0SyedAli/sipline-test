@@ -5,18 +5,20 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import axios from "axios";
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
+import UploadImage from "@/components/UploadImage";
 const AddDiscountWrapper = () => {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <Discount />
-        </Suspense>
-    );
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Discount />
+    </Suspense>
+  );
 };
 const Discount = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [couponId, setCouponId] = useState("");
   const [adminId, setAdminId] = useState("");
+  const [imageFile, setImageFile] = useState(null); // Only store filename
   const [formData, setFormData] = useState({
     couponCode: "",
     discountType: "percentage",
@@ -25,11 +27,17 @@ const Discount = () => {
     areaOfService: "",
     startDate: "",
     endDate: "",
-    status: "Active",
-    barName: ""
+    status: "Active", // Default status
+    barName: "",
+    image: null
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+
+  const handleFileChange = (file) => {
+    setImageFile(file);
+  };
 
   useEffect(() => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
@@ -67,8 +75,18 @@ const Discount = () => {
           startDate: formatDateForInput(coupon.startDate),
           endDate: formatDateForInput(coupon.endDate),
           status: coupon.status,
-          barName: coupon.barName || ""
+          barName: coupon.barName || "",
+          couponImage: coupon.couponImage || "",
         });
+
+        // Set image preview if image exists
+        if (coupon.image) {
+          // You'll need to fetch the actual image from your server
+          const imageUrl = `${process.env.NEXT_PUBLIC_IMAGE_URL}${coupon.image}`;
+          // Convert to base64 or use directly depending on your UploadImage component
+          setImageFile(coupon.image); // Store the filename
+          // If your component needs a preview, you might need to fetch the image
+        }
       } else {
         throw new Error(response.data.msg || "Failed to fetch coupon details");
       }
@@ -82,14 +100,28 @@ const Discount = () => {
 
   const formatDateForInput = (dateString) => {
     if (!dateString) return "";
-    const [day, month, year] = dateString.split("-");
-    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+
+    // Handle both "DD-MM-YYYY" and "YYYY-MM-DD" formats
+    if (dateString.includes("-")) {
+      const parts = dateString.split("-");
+      if (parts[0].length === 4) {
+        // Already in YYYY-MM-DD format
+        return dateString;
+      } else {
+        // Convert from DD-MM-YYYY to YYYY-MM-DD
+        const [day, month, year] = parts;
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      }
+    }
+    return "";
   };
 
   const formatDateForAPI = (dateString) => {
     if (!dateString) return "";
+
+    // Convert from YYYY-MM-DD to DD-MM-YYYY
     const [year, month, day] = dateString.split("-");
-    return `${day}-${month}-${year}`;
+    return `${day.padStart(2, "0")}-${month.padStart(2, "0")}-${year}`;
   };
 
   const handleChange = (e) => {
@@ -101,34 +133,19 @@ const Discount = () => {
   };
 
   const validateForm = () => {
-    if (!formData.couponCode) {
-      setError("Coupon code is required");
-      toast.error("Coupon code is required");
-      return false;
-    }
-    if (!formData.discountPercent || isNaN(formData.discountPercent)) {
-      setError("Please enter a valid discount percentage");
-      toast.error("Please enter a valid discount percentage");
-      return false;
-    }
-    if (!formData.minOrders || isNaN(formData.minOrders)) {
-      setError("Please enter a valid minimum order amount");
-      toast.error("Please enter a valid minimum order amount");
-      return false;
-    }
-    if (!formData.areaOfService) {
-      setError("Area of service is required");
-      toast.error("Area of service is required");
-      return false;
-    }
-    if (!formData.startDate || !formData.endDate) {
-      setError("Please select both start and end dates");
-      toast.error("Please select both start and end dates");
-      return false;
-    }
-    if (new Date(formData.endDate) < new Date(formData.startDate)) {
-      setError("End date must be after start date");
-      toast.error("End date must be after start date");
+    const errors = [];
+
+    if (!formData.couponCode?.trim()) errors.push("Coupon code is required");
+    if (isNaN(parseFloat(formData.discountPercent))) errors.push("Valid discount percentage is required");
+    if (isNaN(parseFloat(formData.minOrders))) errors.push("Valid minimum order amount is required");
+    if (!formData.areaOfService?.trim()) errors.push("Area of service is required");
+    if (!formData.startDate) errors.push("Start date is required");
+    if (!formData.endDate) errors.push("End date is required");
+    if (new Date(formData.endDate) < new Date(formData.startDate)) errors.push("End date must be after start date");
+
+    if (errors.length > 0) {
+      setError(errors.join(", "));
+      errors.forEach(e => toast.error(e));
       return false;
     }
     return true;
@@ -142,45 +159,71 @@ const Discount = () => {
 
     try {
       setLoading(true);
+
+      // Create the payload object (not FormData)
       const payload = {
         couponBy: adminId,
         couponCode: formData.couponCode,
         discountType: formData.discountType,
-        discountPercent: Number(formData.discountPercent),
-        minOrders: Number(formData.minOrders),
+        discountPercent: parseFloat(formData.discountPercent),
+        minOrders: parseFloat(formData.minOrders),
         areaOfService: formData.areaOfService,
         startDate: formatDateForAPI(formData.startDate),
         endDate: formatDateForAPI(formData.endDate),
         status: formData.status,
-        ...(formData.barName && { barName: formData.barName })
+        ...(formData.barName && { barName: formData.barName }),
+        ...(couponId && { couponId }), // Include couponId for updates
       };
 
-      let response;
-      if (couponId) {
-        // Update existing coupon
-        response = await axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateCoupon`,
-          { ...payload, couponId }
-        );
-      } else {
-        // Create new coupon
-        response = await axios.post(
+      // For new coupons with image upload
+      if (!couponId && imageFile) {
+        // If you need to upload image for new coupons, use FormData
+        const formDataToSend = new FormData();
+        formDataToSend.append("image", imageFile);
+        Object.entries(payload).forEach(([key, value]) => {
+          formDataToSend.append(key, value);
+        });
+
+        const response = await axios.post(
           `${process.env.NEXT_PUBLIC_SERVER_URL}admin/createCounpon`,
-          payload
+          formDataToSend,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
         );
+        handleResponse(response);
+        return;
       }
 
-      if (response.data.success) {
-        toast.success(response.data.msg || (couponId ? "Coupon updated successfully!" : "Coupon created successfully!"));
-        router.push("/dashboard/discounts");
-      } else {
-        throw new Error(response.data.msg || "Operation failed");
-      }
+      // For updates or when no image is being uploaded
+      const endpoint = couponId
+        ? `${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateCoupon`
+        : `${process.env.NEXT_PUBLIC_SERVER_URL}admin/createCounpon`;
+
+      const response = await axios.post(endpoint, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      handleResponse(response);
+
     } catch (error) {
       setError(error.response?.data?.msg || error.message);
       toast.error(error.response?.data?.msg || error.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResponse = (response) => {
+    if (response.data.success) {
+      toast.success(response.data.msg || (couponId ? "Coupon updated successfully!" : "Coupon created successfully!"));
+      router.push("/dashboard/discounts");
+    } else {
+      throw new Error(response.data.msg || "Operation failed");
     }
   };
 
@@ -199,6 +242,12 @@ const Discount = () => {
           <div className="row">
             <div className="col-12 col-md-10 col-lg-8 col-xxl-6">
               <div className="row">
+                <div className="col-6">
+                  <UploadImage
+                    onFileChange={handleFileChange}
+                    existingImage={couponId ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${formData.couponImage}` : null}
+                  />
+                </div>
                 <div className="col-6">
                   <label htmlFor="couponCode">Coupon Code</label>
                   <InputField
@@ -221,7 +270,7 @@ const Discount = () => {
                       onChange={handleChange}
                     >
                       <option value="percentage">Percentage</option>
-                      <option value="fixed">Fixed Amount</option>
+                      <option value="fixed">Fixed</option>
                     </select>
                   </div>
                 </div>

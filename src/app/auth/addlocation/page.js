@@ -1,75 +1,107 @@
-// app/add-location/page.jsx
 "use client";
-import { useState, useEffect } from 'react';
-import { FaPlus } from 'react-icons/fa';
-import PlacesAutocomplete from '@/components/PlacesAutocomplete';
-import { useRouter } from 'next/navigation';
+import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
+import InputField from "@/components/Form/InputField";
+import MapDummy from "@/components/MapDummy";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaPlus } from "react-icons/fa";
+import * as yup from "yup"; // Ensure proper import
+
+
+const locationValidation = yup.object().shape({
+  locationName: yup
+    .string()
+    .required("Location is required")
+    .min(2, "Location must be at least 2 characters long"),
+});
 
 export default function AddLocation() {
-  const [showSearch, setShowSearch] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [addLocation, setAddLocation] = useState(false);
+  const [location, setLocation] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
+  const [adminId, setAdminId] = useState(""); // Loading state
+
   useEffect(() => {
-    // Load Google Maps API script
-    if (!window.google) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
+    const adminData = sessionStorage.getItem("admin");
+
+    if (adminData) {
+      try {
+        const AdminData = JSON.parse(adminData);
+        setAdminId(AdminData._id);
+      } catch (error) {
+        console.error("Error parsing admin data from sessionStorage:", error);
+      }
+    } else {
+      router.replace("/auth/login"); // Redirect if no admin data
     }
   }, []);
 
-  const handlePlaceSelected = (place) => {
-    setSelectedPlace({
-      address: place.address,
-      lat: place.location.lat(),
-      lng: place.location.lng()
-    });
-  };
+  const handleNext = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
+    const requestData = {
+      adminId: adminId,
+      locationName: location,
+    };
+
+    try {
+      await locationValidation.validate(requestData, { abortEarly: false }); // Validate data
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateAdmin`, requestData);
+
+      if (response.status === 200) {
+        setSuccess(true);
+        router.push("locationdetails"); // Move to next page
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      if (error.name === "ValidationError") {
+        // If validation fails, set error messages
+        setError(error.errors.join(", "));
+      } else {
+        setError(error.response?.data?.message || "An error occurred. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
-    <div className="p-4">
-      {!showSearch ? (
+    <form>
+      {!addLocation ? (
         <button
-          onClick={() => setShowSearch(true)}
-          className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded"
+          type="button"
+          className="locationBtn"
+          onClick={() => {
+            setAddLocation(true);
+          }}
         >
-          <FaPlus /> Add Location
+          <span>
+            <FaPlus />
+          </span>
+          Add Location
         </button>
       ) : (
-        <div className="space-y-4">
-          <PlacesAutocomplete onPlaceSelected={handlePlaceSelected} />
+        <>
+          <InputField
+            placeholder="Search"
+            classInput="classInput"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+          <MapDummy />
           
-          {selectedPlace && (
-            <div className="mt-4">
-              <h3 className="font-bold">Selected Location:</h3>
-              <p>{selectedPlace.address}</p>
-              <p>Lat: {selectedPlace.lat.toFixed(6)}, Lng: {selectedPlace.lng.toFixed(6)}</p>
-              
-              <div className="mt-4 h-64 w-full bg-gray-200">
-                {/* Simple map embed showing the location */}
-                <iframe
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${selectedPlace.lat},${selectedPlace.lng}`}
-                />
-              </div>
-            </div>
-          )}
-
-          <button
-            onClick={() => router.push('/auth/locationdetails')}
-            className="bg-green-500 text-white px-4 py-2 rounded"
-          >
-            Confirm Location
-          </button>
-        </div>
+          <div className="mt-4">
+             {error && <p style={{ color: "red" }}>{error}</p>}
+            <AuthBtn title="Confirm" type="button" disabled={isLoading} onClick={handleNext} />
+          </div>
+        </>
       )}
-    </div>
+    </form>
   );
 }

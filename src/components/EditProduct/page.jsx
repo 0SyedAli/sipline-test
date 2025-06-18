@@ -9,12 +9,12 @@ import { toast } from "react-toastify";
 import SpinnerLoading from "../Spinner/SpinnerLoading";
 const uploadImg = "/images/solar_upload-linear.png";
 
-export const AddVariant = ({ btntitle, onClose }) => {
+export const EditProduct = ({ btntitle, onClose, productId }) => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false); // Loading state
-  const [loading3, setLoading3] = useState(false); // Loading state
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
+  const [loading3, setLoading3] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImages, setPreviewImages] = useState([]);
   const [productImages, setProductImages] = useState([]);
   const [productName, setProductName] = useState("");
@@ -22,7 +22,6 @@ export const AddVariant = ({ btntitle, onClose }) => {
   const [discount, setDiscount] = useState("");
   const [price, setPrice] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [productId, setProductId] = useState("");
   const [products, setProducts] = useState("");
   const [category, setCategory] = useState([]);
   const [brandName, setBrandName] = useState("");
@@ -30,67 +29,78 @@ export const AddVariant = ({ btntitle, onClose }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const adminData = JSON.parse(sessionStorage.getItem("admin")); // Parse user from localStorage
+    const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (adminData._id) {
-      setAdminId(adminData._id); // Set adminId if available
+      setAdminId(adminData._id);
     } else {
       console.error("User not found or missing 'id' property");
-      router.push("/auth/add-services"); // Redirect to add services if user is invalid
+      router.push("/auth/add-services");
     }
-  }, [router]); // Runs once on mount
+  }, [router]);
 
   useEffect(() => {
     if (adminId) {
       fetchCategory();
-      fetchProduct();
+      if (productId) { // Only fetch product details if productId exists
+        fetchProductDetails();
+      }
     }
-  }, [adminId]); // Runs when adminId changes
+  }, [adminId, productId]); // Add productId to dependency array
 
   const fetchCategory = async () => {
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/AllCategoriesByAdmin?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
-        const categories = response?.data?.data || []; // Ensure it's an array
-        setCategory(categories);
+        setCategory(response?.data?.data || []);
         setTimeout(() => {
           toast.success("Categories fetched successfully!");
-        }, 2000)
-      } else {
-        console.error("Failed to fetch categories:", response?.data?.msg);
-        toast.error("Failed to fetch categories.");
+        }, 2000);
       }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
       toast.error("Failed to fetch categories.");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
-  const fetchProduct = async () => {
+  const fetchProductDetails = async () => {
     try {
-      setLoading3(true); // Start loading
+      setLoading3(true);
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/getAllProducts?adminId=${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/getProductById?productId=${productId}`
       );
 
       if (response?.data?.success) {
-        const products = response?.data?.data || []; // Ensure it's an array
-        setProducts(products);
-        toast.success("Product fetched successfully!");
-      } else {
-        console.error("Failed to fetch products:", response?.data?.msg);
-        toast.error("Failed to fetch products.");
+        const product = response.data.data;
+        // Pre-fill form with existing product data
+        setProductName(product.name);
+        setStockQuantity(product.StockQuantity);
+        setDiscount(product.discount);
+        setPrice(product.price);
+        setCategoryId(product.category?._id || "");
+        setBrandName(product.brandName || "");
+
+        // Set existing images if available
+        if (product.productImages?.length > 0) {
+          setPreviewImages(
+            product.productImages.map(
+              img => `${process.env.NEXT_PUBLIC_IMAGE_URL}${img}`
+            )
+          );
+        }
+
+        toast.success("Product details loaded!");
       }
     } catch (error) {
-      console.error("Failed to fetch products:", error);
-      toast.error("Failed to fetch products.");
+      console.error("Failed to fetch product:", error);
+      toast.error("Failed to load product details.");
     } finally {
-      setLoading3(false); // Stop loading
+      setLoading3(false);
     }
   };
 
@@ -105,28 +115,31 @@ export const AddVariant = ({ btntitle, onClose }) => {
   };
   const handleSubServiceSubmit = async (e) => {
     e.preventDefault();
-    if (!adminId || !productName || !stockQuantity || !discount || !price || !category || !brandName) {
+    if (!productName || !stockQuantity || !discount || !price || !category || !brandName) {
       alert("Please fill all subservice fields.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("adminId", adminId);
     formData.append("productId", productId);
-    formData.append("name", productName);
-    formData.append("StockQuantity", stockQuantity);
-    formData.append("discount", discount);
-    formData.append("price", price);
-    formData.append("category", categoryId);
-    formData.append("brandName", brandName);
-    // Append all images
-    productImages.forEach((file) => {
-      formData.append("ProductImages", file);
-    });
+    // Only append fields that have values
+    if (productName) formData.append("name", productName);
+    if (stockQuantity) formData.append("StockQuantity", stockQuantity);
+    if (discount) formData.append("discount", discount);
+    if (price) formData.append("price", price);
+    if (categoryId) formData.append("category", categoryId);
+    if (brandName) formData.append("brandName", brandName);
+
+    // Only append images if new ones were selected
+    if (productImages && productImages.length > 0) {
+      productImages.forEach((file) => {
+        formData.append("ProductImages", file);
+      });
+    }
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/addVariant`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/updateProduct`,
         formData,
         {
           headers: {
@@ -137,9 +150,9 @@ export const AddVariant = ({ btntitle, onClose }) => {
 
       if (response.data?.success) {
         setSuccess(true);
+        onClose();
         toast.success(response?.data?.msg || "Signup successful!");
         setError(null);
-        onClose();
       }
     } catch (error) {
       // Handle validation or request errors
@@ -148,6 +161,7 @@ export const AddVariant = ({ btntitle, onClose }) => {
       setIsLoading(false); // Re-enable button on error
     } finally {
       setIsLoading(false);
+      onClose();
     }
   };
 
@@ -196,35 +210,6 @@ export const AddVariant = ({ btntitle, onClose }) => {
                     ))}
                   </div>
                 )}
-                {/* {previewImages.length === 0 ? (
-                <div className={`upload_btn bg-light d-flex flex-column align-items-center justify-content-center text-center rounded`}
-                >
-                  <Image width={22} height={22} src={uploadImg} alt="" />
-                  <label htmlFor={`file_abs`} className="">
-                    Drag & Drop or <a className="">Choose File</a> to upload
-                  </label>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                  <p>JPG, PNG.</p>
-                </div>
-              ) : (
-                <div className="d-flex align-items-center gap-2 flex-wrap">
-                  {previewImages.map((src, index) => (
-                    <Image
-                      key={index}
-                      src={src}
-                      width={100}
-                      height={100}
-                      alt={`Preview ${index + 1}`}
-                      className="preview-thumbnail"
-                    />
-                  ))}
-                </div>
-              )} */}
               </div>
             </div>
           </div>
@@ -302,7 +287,7 @@ export const AddVariant = ({ btntitle, onClose }) => {
                 onChange={(e) => setBrandName(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            {/* <div className="col-6">
               <label htmlFor="category">Product</label>
               <select
                 className="form-select my-2 input_field"
@@ -319,25 +304,9 @@ export const AddVariant = ({ btntitle, onClose }) => {
                   </option>
                 ))}
               </select>
-            </div>
+            </div> */}
           </div>
           <div className="product_bottom">
-            {/* <div className="form-check form-switch">
-            <label className="form-check-label" htmlFor="inStock">
-              In Stock
-            </label>
-            <input
-              className="form-check-input"
-              type="checkbox"
-              role="switch"
-              id="inStock"
-            />
-          </div> */}
-            {/* {btntitle && (
-            // <button type="button" className="themebtn4 green btn">
-            //   {btntitle}
-            // </button>
-          )} */}
             <AuthBtn title={btntitle} onClick={handleSubServiceSubmit} location_btn="themebtn4 green btn" type="submit" disabled={isLoading} />
           </div>
         </form>

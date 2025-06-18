@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-
+import { useSelector } from 'react-redux';
 const productImagePlaceholder = "/images/category-image.jpg";
 
 const ManageProduct = () => {
@@ -21,6 +21,7 @@ const ManageProduct = () => {
   const [adminId, setAdminId] = useState("");
   const [activeTab, setActiveTab] = useState("products");
   const [categoryToDelete, setCategoryToDelete] = useState(null);
+  const refreshKey = useSelector((state) => state.refresh.refreshKey);
   const router = useRouter();
 
   useEffect(() => {
@@ -37,7 +38,7 @@ const ManageProduct = () => {
     if (adminId) {
       fetchData();
     }
-  }, [adminId]);
+  }, [adminId, refreshKey]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -81,7 +82,9 @@ const ManageProduct = () => {
       const data = await response.json();
       if (data.success) {
         setCategories(data.data);
-        toast.success("Categories fetched successfully!");
+        // setTimeout(() => {
+        //   toast.success("Categories fetched successfully!");
+        // }, 3000)
       } else {
         throw new Error(data.msg || "Failed to fetch categories.");
       }
@@ -133,9 +136,11 @@ const ManageProduct = () => {
               name={product.name}
               price={product.price}
               stockQuantity={product.StockQuantity}
+              btntitle="Update"
               image={product.productImages?.[0]
                 ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${product.productImages[0]}`
                 : "/images/default-product.png"}
+              productId={product._id}
             />
           </div>
         ))}

@@ -4,8 +4,12 @@ import NotificationModal from "./notificationModalCont/NotificationModal";
 import Image from "next/image";
 import { useDisclosure } from "@chakra-ui/react";
 import AddCategory from "./Modal/AddCategory";
+import { useDispatch } from 'react-redux';
+import { triggerRefresh } from "src/lib/redux/store/slices/refreshSlice";
 
 const TopBar = () => {
+  const dispatch = useDispatch();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
@@ -46,7 +50,12 @@ const TopBar = () => {
           </Link>
         </div>
       </div>
-      <AddCategory btntitle="Filter" isOpen={isOpen} onClose={onClose} />
+      <AddCategory
+        btntitle="Add now"
+        isOpen={isOpen}
+        onClose={onClose}
+        onSuccess={() => dispatch(triggerRefresh())}
+      />
       <NotificationModal />
     </>
   );

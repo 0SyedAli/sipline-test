@@ -1,105 +1,93 @@
 "use client";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import InputField from "@/components/Form/InputField";
 import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
 import { useRouter } from "next/navigation";
-import Textarea from "@/components/Form/TextArea";
+import { Textarea } from '@chakra-ui/react'
 import { useHeader } from "@/components/context/HeaderContext";
 import axios from "axios";
+import * as yup from "yup"; // Ensure proper import
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
-import { updateForm } from "../../../lib/redux/store/slices/multiStepFormSlice";
 import Image from "next/image";
 const mailGen = "/images/profile.png";
 
 // yup validation
-// const selectGenderValidation = yup.object().shape({
-//   phone: yup
-//     .string()
-//     .matches(
-//       /^(?:\+?\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9}|(?:\([0-9]{3}\)|[0-9]{3})[-. ]?[0-9]{3}[-. ]?[0-9]{4}|\+[1-9]\d{1,14})$/,
-//       "Invalid phone number format"
-//     )
-//     .required("Phone number is required"),
-//   gender: yup
-//     .string()
-//     .required("Gender is required")
-//     .oneOf(["male", "female"], "Invalid gender. Must be either male or female"),
-//   bio: yup
-//     .string()
-//     .required("Bio is required")
-//     .min(3, "Bio must be at least 3 characters long"),
-// });
+const genderValidation = yup.object().shape({
+  phone: yup
+    .string()
+    .min(3, "Phone Number must be at least 3 numbers long")
+    .matches(
+      /^(?:\+?\d{1,3}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9}|(?:\([0-9]{3}\)|[0-9]{3})[-. ]?[0-9]{3}[-. ]?[0-9]{4}|\+[1-9]\d{1,14})$/,
+      "Invalid phone number format"
+    )
+    .required("Phone number is required"),
+  gender: yup
+    .string()
+    .required("Gender is required")
+    .oneOf(["male", "female"], "Invalid gender. Must be either male or female"),
+  bio: yup
+    .string()
+    .required("Bio is required")
+    .min(3, "Bio must be at least 3 characters long"),
+});
 
 export default function GenderSelectionPage() {
   const header = useHeader();
   const router = useRouter();
-  const dispatch = useDispatch();
   const [bio, setBio] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Loading state
-  // fetch api
-  // const handleLogin = async (e) => {
-  //   e.preventDefault();
-  //   setIsLoading(true); // Disable the button on submit
-  //   const requestData = {
-  //     gender: gender,
-  //     bio: bio,
-  //     phone: phone,
-  //   };
+  const [adminId, setAdminId] = useState(""); // Loading state
 
-  //   try {
-  //     await selectGenderValidation.validate(requestData); // Validate the data using Yup
-  //     const response = await axios.put(
-  //       `${process.env.NEXT_PUBLIC_SERVER_URL}vendor/auth/select_gender`,
-  //       requestData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-  //         },
-  //       }
-  //     );
-  //     if (response?.data?.code === 200) {
-  //       sessionStorage.setItem("step_after_login", "/auth/addlocation");
-  //       setSuccess(true);
-  //       setError(null);
-  //       router.push("/auth/addlocation");
-  //     } else {
-  //       setError(response.data.message || "Request failed");
-  //       setSuccess(false);
-  //       setIsLoading(false); // Re-enable button on failure
-  //     }
-  //   } catch (error) {
-  //     setError(error?.message || error?.response?.data?.message);
-  //     setSuccess(false);
-  //     setIsLoading(false); // Re-enable button on error
-  //   }
-  // };
-  const formData = useSelector((state) => state);
-  
-  const handleNext = () => {
-    if (!gender || !phone || !bio) {
-      setError("All fields are required.");
-      setIsLoading(false)
-      setSuccess(false)
-      return;
+  useEffect(() => {
+    const adminData = sessionStorage.getItem("admin");
+
+    if (adminData) {
+      try {
+        const AdminData = JSON.parse(adminData);
+        setAdminId(AdminData._id);
+      } catch (error) {
+        console.error("Error parsing admin data from sessionStorage:", error);
+      }
+    } else {
+      router.replace("/auth/login"); // Redirect if no admin data
     }
-    setIsLoading(true)
-    setSuccess(true)
+  }, []);
 
-    dispatch(updateForm({
+  const handleNext = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const requestData = {
+      adminId: adminId,
       gender: gender,
-      phone: phone,
       bio: bio,
-    }));
-    console.log("Merged form data:", {
-      ...formData,
-    });
-    router.push("addlocation"); // move to next page
+      phone: phone,
+    };
+
+    try {
+      await genderValidation.validate(requestData, { abortEarly: false }); // Validate data
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateAdmin`, requestData);
+
+      if (response.status === 200) {
+        setSuccess(true);
+        router.push("addlocation"); // Move to next page
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      if (error.name === "ValidationError") {
+        // If validation fails, set error messages
+        setError(error.errors.join(", "));
+      } else {
+        setError(error.response?.data?.message || "An error occurred. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -156,11 +144,10 @@ export default function GenderSelectionPage() {
                 classInput="classInput"
                 onChange={(e) => setPhone(e.target.value)}
               />
-
               <Textarea
-                title="Bio"
-                value={bio}
-                setBio={setBio} // Ensure this is working correctly
+                placeholder="Bio"
+                className="textarea_field"
+                onChange={(e) => setBio(e.target.value)}
               />
 
               {error && <p style={{ color: "red" }}>{error}</p>}

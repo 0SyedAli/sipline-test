@@ -1,13 +1,13 @@
 import Modal from "./layout";
 import "./modal.css";
 import { RxCross2 } from "react-icons/rx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { AuthBtn } from "../AuthBtn/AuthBtn";
 import SpinnerLoading from "../Spinner/SpinnerLoading";
 import axios from "axios";
 
-function AddCategory({ isOpen, onClose, btntitle }) {
+function AddCategory({ isOpen, onClose, btntitle, onSuccess }) {
   const [categories] = useState(["Category1", "Category2", "Category3", "Category4"]);
   const [selectedCategory, setSelectedCategory] = useState(""); // Changed to single string
   const [tag, setTag] = useState("");
@@ -26,24 +26,23 @@ function AddCategory({ isOpen, onClose, btntitle }) {
     setSelectedCategory(""); // Just clear the single category
   };
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (!selectedCategory) {
-      setError("Please select catogory");
+      setError("Please select category");
       setIsLoading(false);
       return;
     }
-    const requestData = {
-      adminId: adminData?._id,
-      categoryName: selectedCategory, // Now sending a single string
-    };
 
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}admin/category`,
-        requestData,
+        {
+          adminId: adminData?._id,
+          categoryName: selectedCategory,
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -52,27 +51,19 @@ function AddCategory({ isOpen, onClose, btntitle }) {
       );
 
       if (response?.data?.success === true) {
-        setSuccess(true);
         toast.success(response?.data?.msg || "Category Added successfully!");
-        setError(null);
+        onSuccess(); // Call the success callback
         onClose();
-        setIsLoading(false);
       } else {
-        toast.error(response?.data?.msg || "Invalid");
-        setError(response?.data?.msg || "Invalid");
-        setSuccess(false);
-        setIsLoading(false);
+        toast.error(response?.data?.msg || "Invalid data received");
+        setError(response?.data?.msg || "Invalid data received");
       }
     } catch (error) {
       setError(error?.response?.data?.message || error?.message);
-      setSuccess(false);
-      setIsLoading(false);
     } finally {
-      setSuccess(false);
       setIsLoading(false);
-      setError(null)
-      setSelectedCategory("")
-      setTag("")
+      setSelectedCategory("");
+      setTag("");
     }
   };
 
@@ -136,7 +127,7 @@ function AddCategory({ isOpen, onClose, btntitle }) {
                 Cancel
               </button>
               {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
-              <AuthBtn title="Add Now" onClick={handleLogin} location_btn="themebtn4 green btn" type="button" disabled={isLoading} />
+              <AuthBtn title={btntitle} onClick={handleSubmit} location_btn="themebtn4 green btn" type="button" disabled={isLoading} />
             </div>
           </form>
         </div>

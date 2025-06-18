@@ -7,6 +7,7 @@ import { BsDot } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Image from "next/image";
 
 const edetIcon = "/images/edit-2.svg";
 const deleteIcon = "/images/trash.svg";
@@ -115,20 +116,28 @@ const Discounts = () => {
         <div className="transaction_body">
           {coupons.map((coupon) => (
             <div key={coupon._id} className="transaction_item">
-              <div className="d-flex flex-column">
-                <h5>Coupon Code: {coupon.couponCode}</h5>
-                {/* <div className="d-flex align-items-center gap-3">
+              <div className="d-flex align-items-center gap-3">
+                <Image
+                  width={80}
+                  height={80}
+                  src={coupon?.couponImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${coupon?.couponImage}` :"/images/default-avatar.png"}
+                  alt="category image"
+                />
+                <div className="d-flex flex-column">
+                  <h5>Coupon Code: {coupon.couponCode}</h5>
+                  {/* <div className="d-flex align-items-center gap-3">
                   <h6>Discount: {coupon.discountPercent}% ({coupon.discountType})</h6>
                   <h6>Min Orders: ${coupon.minOrders}</h6>
                 </div> */}
-                <div className="d-flex align-items-center gap-3">
-                  <h6>Valid: {coupon.startDate}
-                    {/* to {coupon.endDate} */}
-                  </h6>
-                  <h6><BsDot /></h6>
-                  <h6>Status: {coupon.status}</h6>
+                  <div className="d-flex align-items-center gap-3">
+                    <h6>Valid: {coupon.startDate}
+                      {/* to {coupon.endDate} */}
+                    </h6>
+                    <h6><BsDot /></h6>
+                    <h6>Status: {coupon.status}</h6>
+                  </div>
+                  {/* {coupon.barName && <h6>Bar: {coupon.barName}</h6>} */}
                 </div>
-                {/* {coupon.barName && <h6>Bar: {coupon.barName}</h6>} */}
               </div>
               <div className="ed_btns">
                 <Link

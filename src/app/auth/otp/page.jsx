@@ -130,10 +130,10 @@ export default function Otp() {
 
       if (response?.status === 200 || response?.status === 201) {
         if (response?.data?.data) {
-          dispatch(setAdmin({
-            token: response?.data?.accessToken,
-            adminId: response?.data?.data?._id || response?.data?.data?.adminId,
-          }));
+          // dispatch(setAdmin({
+          //   token: response?.data?.accessToken,
+          //   adminId: response?.data?.data?._id || response?.data?.data?.adminId,
+          // }));
 
           setSuccess(true);
           toast.success(response?.data?.msg || "OTP has been verified successfully!");
@@ -141,6 +141,8 @@ export default function Otp() {
 
           sessionStorage.setItem("admin", JSON.stringify(response?.data?.data));
           sessionStorage.setItem("token", accessToken);
+          // sessionStorage.removeItem("admin");
+          // sessionStorage.removeItem("token");
           router.push("createprofile");
         } else {
           toast.error(response?.data?.msg || "Invalid OTP");

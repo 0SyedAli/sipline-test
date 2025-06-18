@@ -6,6 +6,7 @@ import axios from "axios";
 import { AuthBtn } from "../AuthBtn/AuthBtn";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 import SpinnerLoading from "../Spinner/SpinnerLoading";
 const uploadImg = "/images/solar_upload-linear.png";
 export const AddNewProduct = ({ title, btntitle }) => {
@@ -24,6 +25,8 @@ export const AddNewProduct = ({ title, btntitle }) => {
   const [brandName, setBrandName] = useState("");
   const [adminId, setAdminId] = useState("");
   const fileInputRef = useRef(null);
+  const refreshKey = useSelector((state) => state.refresh.refreshKey);
+
   const router = useRouter();
   useEffect(() => {
     const adminData = JSON.parse(sessionStorage.getItem("admin")); // Parse user from localStorage
@@ -38,7 +41,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
     if (adminId) {
       fetchCategory();
     }
-  }, [adminId]); // Runs when adminId changes
+  }, [adminId, refreshKey]); // Runs when adminId changes
 
   const fetchCategory = async () => {
     try {
@@ -50,7 +53,9 @@ export const AddNewProduct = ({ title, btntitle }) => {
       if (response?.data?.success) {
         const categories = response?.data?.data || []; // Ensure it's an array
         setCategory(categories);
-        toast.success("Categories fetched successfully!");
+        setTimeout(() => {
+          toast.success("Categories fetched successfully!");
+        }, 2000)
       } else {
         console.error("Failed to fetch categories:", response?.data?.msg);
         toast.error("Failed to fetch categories.");
@@ -115,9 +120,9 @@ export const AddNewProduct = ({ title, btntitle }) => {
         setBrandName("");
         setProductImages([]);
         setPreviewImages([]);
-         if (fileInputRef.current) {
-                    fileInputRef.current.value = ""; // Reset the file input value
-                }
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ""; // Reset the file input value
+        }
       }
     } catch (error) {
       // Handle validation or request errors

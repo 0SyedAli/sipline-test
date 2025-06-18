@@ -1,32 +1,11 @@
 "use client";
 import { useDisclosure } from "@chakra-ui/react";
-import AddNow from "@/components/Modal/AddNow";
-import VariantProduct from "@/components/VariantProduct";
-import Link from "next/link";
-
 import { AddNewProduct } from "@/components/AddNewProduct/page";
+import AddVariantModal from "@/components/Modal/AddVariantModal";
 
 const Page = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // const variantOrder = [
-  //   {
-  //     title: "Orange Juice",
-  //     quantity: 5,
-  //     price: "48",
-  //   },
-  //   {
-  //     title: "Orange Juice",
-  //     quantity: 5,
-  //     price: "48",
-  //   },
-  //   {
-  //     title: "Orange Juice",
-  //     quantity: 5,
-  //     price: "48",
-  //   },
-  // ];
-
+  
   return (
     <div className="page">
       <div className="manage_order_head">
@@ -39,7 +18,7 @@ const Page = () => {
         </button>
       </div>
 
-      <AddNow btntitle="Add Varient" isOpen={isOpen} onClose={onClose} />
+      <AddVariantModal btntitle="Add Varient" isOpen={isOpen} onClose={onClose} />
 
       {/* <div className="manage_order_head pt-0">
         <h3 className="pb-2">Variants</h3>
@@ -55,12 +34,11 @@ const Page = () => {
           </div>
         ))}
       </div> */}
-      <div className="text-end">
-        {/* <DataListInput /> */}
+      {/* <div className="text-end">
         <Link href="/" className="themebtn4 green btn">
           Add Now
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };

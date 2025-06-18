@@ -14,7 +14,6 @@ import Image from "next/image";
 import axios from "axios";
 const user_cover = "/images/userCover.jpg";
 const customer = "/images/default-avatar.png";
-const edit_icon = "/images/edit_icon.png";
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("product");
@@ -24,6 +23,7 @@ const UserProfile = () => {
   const [adminData, setAdminData] = useState("");
   const [shopId, setShopId] = useState("");
   const router = useRouter();
+  const [refreshKey, setRefreshKey] = useState(0);
   const [products, setProducts] = useState([]);
   const [shopData, setShopData] = useState([]);
   const [workingDays, setWorkingDays] = useState([]);
@@ -31,7 +31,6 @@ const UserProfile = () => {
   const [workEndTime, setWorkEndTime] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(""); // Store only one error at a time
-  console.log(shopData);
 
   useEffect(() => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
@@ -41,9 +40,9 @@ const UserProfile = () => {
       setShopId(adminData?.shopId);
     } else {
       console.error("User not found or missing '_id' property");
-      router.push("/auth/add-services");
+      router.push("/auth/login");
     }
-  }, [router]);
+  }, [router, refreshKey]);
 
   useEffect(() => {
     if (adminId) {
@@ -81,7 +80,8 @@ const UserProfile = () => {
     setWorkEndTime(formatTimeWithSeconds(endTime));
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e) => {
+    e.preventDefault();
     if (!workingDays || !workStartTime || !workEndTime) {
       setError("All fields are required.");
       setIsLoading(false);
@@ -115,6 +115,11 @@ const UserProfile = () => {
       if (response.ok && result?.success) {
         toast.success(result?.msg || "Profile updated successfully!");
         setSuccess(true);
+        await getShop();  // <-- Add this line
+
+        // Also increment refreshKey if you're using it elsewhere
+        setRefreshKey(prev => prev + 1);
+
         // router.push("/dashboard");
       } else {
         toast.error(result?.msg || "Invalid data received");
@@ -125,6 +130,7 @@ const UserProfile = () => {
       setError(err.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
+      setSuccess(false);
     }
   };
 
@@ -191,46 +197,6 @@ const UserProfile = () => {
     }
   };
 
-  // const getShop = async () => {
-  //   const token = sessionStorage.getItem("token");
-
-  //   if (!token) {
-  //     setError("Missing authentication details. Please log in again.");
-  //     setLoading(false);
-  //     return;
-  //   }
-
-  //   try {
-  //     setError(null);
-  //     setLoading(true);
-
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_SERVER_URL}admin/getAllProducts?adminId=${adminId}`,
-  //       {
-  //         method: "GET",
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-
-  //     if (data.success) {
-  //       toast.success("Products fetched successfully!");
-  //       setProducts(data.data);
-  //     } else {
-  //       throw new Error(data.msg || "Failed to fetch products.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching products:", error);
-  //     setError(error.message || "Failed to load products. Please try again later.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   return (
     <div className="page">
       <div className="user_banner mt-5">
@@ -242,7 +208,7 @@ const UserProfile = () => {
             </div> */}
           </div>
           <div className="user_profile">
-            {console.log(process.env.NEXT_PUBLIC_IMAGE_URL + adminData?.profileImage)}
+            {console.log("image:", process.env.NEXT_PUBLIC_IMAGE_URL + adminData?.profileImage)}
             <Image width={126} height={126} src={adminData?.profileImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${adminData?.profileImage}` : customer} alt="" />
             {/* <div className="up_upload_btn">
               <FaPlus />
@@ -294,6 +260,10 @@ const UserProfile = () => {
                     <SpinnerLoading />
                   ) : error ? (
                     <p>{error}</p>
+                  ) : products.length === 0 ? (
+                    <p style={{ textAlign: "left", color: "gray", marginTop: "20px" }}>
+                      Product not found.
+                    </p>
                   ) : (
                     <>
                       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 gx-3">
@@ -335,82 +305,12 @@ const UserProfile = () => {
                 </div>
               )}
               {activeTab === "details" && (
-                // <div className="page details_tab">
-                //   <form>
-                //     <label htmlFor="" className="mt-2">
-                //       Including These Days
-                //     </label>
-                //     <div className="d-flex my-3 " style={{ gap: 10 }}>
-                //       <div className="calender_item">
-                //         <input
-                //           type="radio"
-                //           defaultChecked
-                //           id="radio101"
-                //           name="day1"
-                //         />
-                //         <label htmlFor="radio101">Mon</label>
-                //         <div className="calender_spot"></div>
-                //       </div>
-                //       <div className="calender_item">
-                //         <input type="radio" id="radio102" name="day1" />
-                //         <label htmlFor="radio102">Tue</label>
-                //         <div className="calender_spot"></div>
-                //       </div>
-                //       <div className="calender_item">
-                //         <input type="radio" id="radio103" name="day1" />
-                //         <label htmlFor="radio103">Wed</label>
-                //         <div className="calender_spot"></div>
-                //       </div>
-                //       <div className="calender_item">
-                //         <input type="radio" id="radio104" name="day1" />
-                //         <label htmlFor="radio104">Thu</label>
-                //         <div className="calender_spot"></div>
-                //       </div>
-                //       <div className="calender_item">
-                //         <input type="radio" id="radio105" name="day1" />
-                //         <label htmlFor="radio105">Fri</label>
-                //         <div className="calender_spot"></div>
-                //       </div>
-                //       <div className="calender_item">
-                //         <input type="radio" id="radio106" name="day1" />
-                //         <label htmlFor="radio106">Sat</label>
-                //         <div className="calender_spot"></div>
-                //       </div>
-                //       <div className="calender_item">
-                //         <input type="radio" id="radio107" name="day1" />
-                //         <label htmlFor="radio107">Sun</label>
-                //         <div className="calender_spot"></div>
-                //       </div>
-                //     </div>
-                //     <label htmlFor="" className="mt-2">
-                //       Time Range
-                //     </label>
-                //     <div className="cs-form time_picker d-flex gap-3 align-items-center py-3">
-                //       <input
-                //         type="time"
-                //         className="form-control"
-                //         value="10:05 AM"
-                //       />
-                //       <span>To</span>
-                //       <input
-                //         type="time"
-                //         className="form-control"
-                //         value="12:05 PM"
-                //       />
-                //     </div>
-                //     <div className="mt-4">
-                //       <button className="themebtn4 green btn" type="button">
-                //         Update
-                //       </button>
-                //     </div>
-                //   </form>
-                // </div>
                 <>
                   {success ? (
                     <SpinnerLoading />
                   ) : (
                     <div>
-                      <form className="position-relative mt-5 pt-0">
+                      <form key={refreshKey} className="position-relative mt-5 pt-0">
                         <fieldset>
                           <div className="calender_container">
                             <label htmlFor="working-days" className="pb-1">
@@ -484,7 +384,7 @@ const UserProfile = () => {
             <div className="about_sec">
               <h4>About</h4>
               <p>
-                {adminData?.bio  || "No Data"}
+                {adminData?.bio || "No Data"}
               </p>
             </div>
             <div className="up_timing">
