@@ -21,10 +21,10 @@ const data = [
 
 // Define CardLineChart component
 const CardLineChart2 = () => (
-  <div style={{ height: "340px", width: "30%", position: 'relative' }}>
+  <div style={{ height: "340px", width: "30%", position: 'relative' }}  className="dash_chart2">
     <div className="chart_head1 flex-column align-items-start position-absolute">
       <h2>Weekly Sales</h2>
-      <div className="pt-4">
+      <div className="pt-3 pt-md-4">
         <h3>$30,214.02</h3>
         <h5><span>+0.03%</span></h5>
       </div>

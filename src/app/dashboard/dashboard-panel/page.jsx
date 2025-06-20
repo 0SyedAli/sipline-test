@@ -3,7 +3,6 @@ import CardLineChart from "@/components/CardLineChart";
 import CardLineChart2 from "@/components/CardLineChart2";
 import OverviewCards from "@/components/OverviewCards";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -59,68 +58,25 @@ const DashboardPanel = ({ activeTab }) => {
       setLoading(false);
     }
   };
-  // Sample order data
-  // const orders = [
-  //   {
-  //     id: "#4FE21",
-  //     image: image1,
-  //     name: "Ronald Richards",
-  //     category: "Burger",
-  //     amount: "+$10",
-  //     date: "20/09/2022",
-  //     quantity: 4,
-  //     status: "pending",
-  //   },
-  //   {
-  //     id: "#4FE22",
-  //     image: image2,
-  //     name: "John Doe",
-  //     category: "Pizza",
-  //     amount: "-$12",
-  //     date: "21/09/2022",
-  //     quantity: 2,
-  //     status: "ready",
-  //   },
-  //   {
-  //     id: "#4FE22",
-  //     image: image2,
-  //     name: "John Doe",
-  //     category: "Pizza",
-  //     amount: "-$12",
-  //     date: "21/09/2022",
-  //     quantity: 2,
-  //     status: "rejected",
-  //   },
-  //   {
-  //     id: "#4FE22",
-  //     image: image2,
-  //     name: "John Doe",
-  //     category: "Pizza",
-  //     amount: "-$12",
-  //     date: "21/09/2022",
-  //     quantity: 2,
-  //     status: "picked",
-  //   },
-  // ];
 
   return (
     <div className="page">
       <div className="dashboard_panel_inner">
-        <div className="row">
-          <div className="col-md-3">
+        <div className="row gx-3 gy-2 gy-sm-3 gx-xl-4">
+          <div className="col-sm-6 col-lg-3">
             <OverviewCards ovimg={img1} />
           </div>
-          <div className="col-md-3">
+          <div className="col-sm-6 col-lg-3">
             <OverviewCards ovimg={img2} />
           </div>
-          <div className="col-md-3">
+          <div className="col-sm-6 col-lg-3">
             <OverviewCards ovimg={img3} />
           </div>
-          <div className="col-md-3">
+          <div className="col-sm-6 col-lg-3">
             <OverviewCards ovimg={img4} />
           </div>
         </div>
-        <div className="my-4 d-flex align-items-end">
+        <div className="my-4 d-flex align-items-end flex-column flex-lg-row">
           <CardLineChart />
           <CardLineChart2 />
         </div>

@@ -363,7 +363,7 @@ const Order = ({ params }) => {
       <div className="manage_order_body new_order_display">
         <div className="row">
           <div className="col-lg-9 col-md-12">
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 gx-3 pb-3">
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xxl-4 gx-3 pb-3">
               {products.map((product, index) => (
                 <div key={`product-${product._id || index}`} className="col">
                   <NewOrderProductCard

@@ -18,7 +18,7 @@ export default function UploadImageFile({ onFileChange, existingImage  }) {
   };
 
   return (
-    <div style={styles.container}>
+    <div className="upload_img_cont">
       {previewUrl ? (
         <div style={styles.imageContainer}>
           <img src={previewUrl} alt="Preview" style={styles.imagePreview} />
@@ -44,19 +44,6 @@ export default function UploadImageFile({ onFileChange, existingImage  }) {
 }
 
 const styles = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    marginTop: "20px",
-    width: "124px",
-    height: "124px",
-    outline: "1px solid #000",
-    textAlign: "center",
-    borderRadius: "100%",
-    margin: "20px auto 50px",
-    position: "relative",
-  },
   imagePreview: {
     width: "124px",
     height: "124px",

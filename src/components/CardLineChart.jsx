@@ -40,13 +40,13 @@ const data = [
 
 // Define CardLineChart component
 const CardLineChart = () => (
-  <div style={{ height: "340px", width: "70%" }}>
+  <div style={{ height: "340px", width: "70%" }} className="dash_chart1">
     <div className="chart_head px-4">
       <h2>Overview</h2>
       <div className="chart_head_filter">
         <h5>Case</h5>
         <h5>Marketing</h5>
-        <Select placeholder="Monthly">
+        <Select placeholder="Monthly" className="abc">
           <option value="option1">Option 1</option>
           <option value="option2">Option 2</option>
           <option value="option3">Option 3</option>

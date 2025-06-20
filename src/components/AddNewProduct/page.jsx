@@ -8,12 +8,34 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import SpinnerLoading from "../Spinner/SpinnerLoading";
+import * as yup from "yup";
 const uploadImg = "/images/solar_upload-linear.png";
+
+const validationSchema = yup.object().shape({
+  productName: yup.string().required("Product name is required"),
+  stockQuantity: yup
+    .number()
+    .required("Stock quantity is required")
+    .positive("Stock quantity must be a positive number"),
+  discount: yup
+    .number()
+    .required("Discount is required")
+    .min(0, "Discount cannot be negative")
+    .max(100, "Discount cannot exceed 100%"),
+  price: yup
+    .number()
+    .required("Price is required")
+    .positive("Price must be a positive number"),
+  categoryId: yup.string().required("Category is required"),
+  brandName: yup.string().required("Brand name is required"),
+});
+
+
 export const AddNewProduct = ({ title, btntitle }) => {
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false); // Loading state
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false); // Category fetch loading
+  const [isLoading, setIsLoading] = useState(false); // Form submission loading
   const [previewImages, setPreviewImages] = useState([]);
   const [productImages, setProductImages] = useState([]);
   const [productName, setProductName] = useState("");
@@ -24,114 +46,114 @@ export const AddNewProduct = ({ title, btntitle }) => {
   const [category, setCategory] = useState([]);
   const [brandName, setBrandName] = useState("");
   const [adminId, setAdminId] = useState("");
+
   const fileInputRef = useRef(null);
   const refreshKey = useSelector((state) => state.refresh.refreshKey);
-
   const router = useRouter();
+
+  // Fetch admin data
   useEffect(() => {
-    const adminData = JSON.parse(sessionStorage.getItem("admin")); // Parse user from localStorage
-    if (adminData._id) {
-      setAdminId(adminData._id); // Set adminId if available
+    const adminData = JSON.parse(sessionStorage.getItem("admin"));
+    if (adminData?._id) {
+      setAdminId(adminData._id);
     } else {
-      console.error("User not found or missing 'id' property");
-      router.push("/auth/add-services"); // Redirect to add services if user is invalid
+      toast.error("Invalid admin data. Redirecting...");
+      router.push("/auth/add-services");
     }
-  }, [router]); // Runs once on mount
+  }, [router]);
+
+  // Fetch categories
   useEffect(() => {
     if (adminId) {
       fetchCategory();
     }
-  }, [adminId, refreshKey]); // Runs when adminId changes
+  }, [adminId, refreshKey]);
 
   const fetchCategory = async () => {
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/AllCategoriesByAdmin?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
-        const categories = response?.data?.data || []; // Ensure it's an array
-        setCategory(categories);
-        setTimeout(() => {
-          toast.success("Categories fetched successfully!");
-        }, 2000)
+        setCategory(response.data.data || []);
+        toast.success("Categories fetched successfully!");
       } else {
-        console.error("Failed to fetch categories:", response?.data?.msg);
-        toast.error("Failed to fetch categories.");
+        toast.error(response?.data?.msg || "Failed to fetch categories.");
       }
-    } catch (error) {
-      console.error("Failed to fetch categories:", error);
-      toast.error("Failed to fetch categories.");
+    } catch (err) {
+      toast.error(err.message || "An error occurred while fetching categories.");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
-
+  // Handle image file selection
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     setProductImages(files);
-
-    // Generate preview URLs
-    const previewUrls = files.map((file) => URL.createObjectURL(file));
-    setPreviewImages(previewUrls);
+    setPreviewImages(files.map((file) => URL.createObjectURL(file)));
   };
-  const handleSubServiceSubmit = async (e) => {
-    e.preventDefault();
-    if (!adminId || !productName || !stockQuantity || !discount || !price || !category || !brandName) {
-      alert("Please fill all subservice fields.");
-      return;
-    }
 
-    const formData = new FormData();
-    formData.append("adminId", adminId);
-    formData.append("name", productName);
-    formData.append("StockQuantity", stockQuantity);
-    formData.append("discount", discount);
-    formData.append("price", price);
-    formData.append("category", categoryId);
-    formData.append("brandName", brandName);
-    // Append all images
-    productImages.forEach((file) => {
-      formData.append("ProductImages", file);
-    });
-    setIsLoading(true);
+  // Handle form submission
+  const handleAddProductSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validate form data with yup
     try {
+      await validationSchema.validate({
+        productName,
+        stockQuantity,
+        discount,
+        price,
+        categoryId,
+        brandName,
+      });
+
+      const formData = new FormData();
+      formData.append("adminId", adminId);
+      formData.append("name", productName);
+      formData.append("StockQuantity", stockQuantity);
+      formData.append("discount", discount);
+      formData.append("price", price);
+      formData.append("category", categoryId);
+      formData.append("brandName", brandName);
+      productImages.forEach((file) => formData.append("ProductImages", file));
+
+      setIsLoading(true);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/addProduct`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
       if (response.data?.success) {
-        setSuccess(true);
-        toast.success(response?.data?.msg || "Signup successful!");
-        setError(null);
-        setProductName("");
-        setStockQuantity("");
-        setDiscount("");
-        setPrice("");
-        setCategoryId([]);
-        setBrandName("");
-        setProductImages([]);
-        setPreviewImages([]);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = ""; // Reset the file input value
-        }
+        toast.success(response.data.msg || "Product added successfully!");
+        setError("");
+        resetForm();
+      } else {
+        toast.error(response.data?.msg || "Failed to add product.");
       }
-    } catch (error) {
-      // Handle validation or request errors
-      setError(error?.response?.data?.msg || error?.message);
-      toast.error(response?.data?.msg || "Signup successful!");
-      setSuccess(false);
-      setIsLoading(false); // Re-enable button on error
+    } catch (err) {
+      toast.error(err.response?.data?.msg || "An error occurred during submission.");
+      setError(err.response?.data?.msg || err.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setProductName("");
+    setStockQuantity("");
+    setDiscount("");
+    setPrice("");
+    setCategoryId("");
+    setBrandName("");
+    setProductImages([]);
+    setPreviewImages([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -175,8 +197,8 @@ export const AddNewProduct = ({ title, btntitle }) => {
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="col-6">
+          <div className="row gx-2 gx-md-4">
+            <div className="col-12 col-sm-6">
               <label htmlFor="name">Name</label>
               <InputField
                 type="text"
@@ -187,7 +209,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
                 onChange={(e) => setProductName(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="stock">Stock Quantity</label>
               <InputField
                 type="number"
@@ -198,7 +220,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
                 onChange={(e) => setStockQuantity(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="discount">Set Discount</label>
               <InputField
                 type="number"
@@ -209,7 +231,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
                 onChange={(e) => setDiscount(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="price">Price</label>
               <InputField
                 type="text"
@@ -220,7 +242,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
                 onChange={(e) => setPrice(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="category">Category</label>
               <select
                 className="form-select my-2 input_field"
@@ -238,7 +260,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
                 ))}
               </select>
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="brand">Brand Name</label>
               <InputField
                 type="text"
@@ -250,8 +272,9 @@ export const AddNewProduct = ({ title, btntitle }) => {
               />
             </div>
           </div>
-          <div className="product_bottom">
-            <AuthBtn title={btntitle} onClick={handleSubServiceSubmit} location_btn="themebtn4 green btn" type="submit" disabled={isLoading} />
+          <div className="product_bottom flex-column">
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            <AuthBtn title={btntitle} onClick={handleAddProductSubmit} location_btn="themebtn4 green btn" type="submit" disabled={isLoading} />
           </div>
         </form>
       )}

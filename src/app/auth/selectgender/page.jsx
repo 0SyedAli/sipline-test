@@ -103,7 +103,7 @@ export default function GenderSelectionPage() {
           <form>
             <fieldset>
               <div>
-                <div className="gender_container d-flex justify-content-center gap-3 align-items-center mb-5">
+                <div className="gender_container d-flex justify-content-center gap-3 align-items-center mb-3 mb-md-4 mb-xl-5">
                   <div className="text-center">
                     <label className="select_gender">
                       <input

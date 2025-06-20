@@ -214,7 +214,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
             </div>
           </div>
           <div className="row">
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="name">Name</label>
               <InputField
                 type="text"
@@ -225,7 +225,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
                 onChange={(e) => setProductName(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="stock">Stock Quantity</label>
               <InputField
                 type="number"
@@ -236,7 +236,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
                 onChange={(e) => setStockQuantity(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="discount">Set Discount</label>
               <InputField
                 type="number"
@@ -247,7 +247,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
                 onChange={(e) => setDiscount(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="price">Price</label>
               <InputField
                 type="text"
@@ -258,7 +258,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
                 onChange={(e) => setPrice(e.target.value)}
               />
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="category">Category</label>
               <select
                 className="form-select my-2 input_field"
@@ -276,7 +276,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
                 ))}
               </select>
             </div>
-            <div className="col-6">
+            <div className="col-12 col-sm-6">
               <label htmlFor="brand">Brand Name</label>
               <InputField
                 type="text"

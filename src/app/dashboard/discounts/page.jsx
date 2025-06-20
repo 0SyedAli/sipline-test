@@ -113,10 +113,10 @@ const Discounts = () => {
       ) : coupons.length === 0 ? (
         <p className="mt-5">No coupons found. Create your first coupon!</p>
       ) : (
-        <div className="transaction_body">
+        <div className="transaction_body discount2_body">
           {coupons.map((coupon) => (
             <div key={coupon._id} className="transaction_item">
-              <div className="d-flex align-items-center gap-3">
+              <div className="ti_inner d-flex align-items-center gap-3">
                 <Image
                   width={80}
                   height={80}
@@ -129,7 +129,7 @@ const Discounts = () => {
                   <h6>Discount: {coupon.discountPercent}% ({coupon.discountType})</h6>
                   <h6>Min Orders: ${coupon.minOrders}</h6>
                 </div> */}
-                  <div className="d-flex align-items-center gap-3">
+                  <div className="ti_validity d-flex align-items-center gap-3">
                     <h6>Valid: {coupon.startDate}
                       {/* to {coupon.endDate} */}
                     </h6>

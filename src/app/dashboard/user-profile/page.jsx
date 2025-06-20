@@ -217,8 +217,8 @@ const UserProfile = () => {
         </div>
       </div>
       <div className="user_profile_body">
-        <div className="row">
-          <div className="col-9">
+        <div className="row gy-4 gy-xl-0">
+          <div className="col-xl-9">
             <h4>
               <FaStar />
               0.0 | Rating
@@ -266,7 +266,7 @@ const UserProfile = () => {
                     </p>
                   ) : (
                     <>
-                      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 gx-3">
+                      <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-4 gx-3">
                         {products.slice(0, 4).map((product) => (
                           <div className="col" key={product._id}>
                             <ProductCards
@@ -380,7 +380,7 @@ const UserProfile = () => {
               )}
             </div>
           </div>
-          <div className="col-3">
+          <div className="col-xl-3">
             <div className="about_sec">
               <h4>About</h4>
               <p>

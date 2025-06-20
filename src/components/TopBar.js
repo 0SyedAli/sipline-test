@@ -6,11 +6,19 @@ import { useDisclosure } from "@chakra-ui/react";
 import AddCategory from "./Modal/AddCategory";
 import { useDispatch } from 'react-redux';
 import { triggerRefresh } from "src/lib/redux/store/slices/refreshSlice";
+import { useState } from "react";
+import { RiMenu3Line } from "react-icons/ri";
 
 const TopBar = () => {
   const dispatch = useDispatch();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+
   return (
     <>
       <div className="topbar_container">
@@ -28,26 +36,38 @@ const TopBar = () => {
           </h2>
           <p>Are you thirsty? Would you like something?</p>
         </div>
-        <div className="d-flex align-items-center gap-3">
+        <div className="menu_wrapper">
           <button
-            type="button"
-            className="noti_btn"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
+            className="menu_toggle"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
           >
-            <Image
-              src="/images/notification.png"
-              alt="notification icon"
-              width={25}
-              height={25}
-            />
+            <RiMenu3Line />
           </button>
-          <div onClick={onOpen} className="btn btntheme3">
-            Add Category
+          <div
+            className={`top_menu d-flex align-items-center gap-3 ${menuOpen ? "open" : ""
+              }`}
+          >
+            <button
+              type="button"
+              className="noti_btn"
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+            >
+              <Image
+                src="/images/notification.png"
+                alt="notification icon"
+                width={25}
+                height={25}
+              />
+            </button>
+            <div onClick={onOpen} className="btn btntheme3">
+              Add Category
+            </div>
+            <Link href="/dashboard/addproduct" className="btn btntheme3">
+              Add Product
+            </Link>
           </div>
-          <Link href="/dashboard/addproduct" className="btn btntheme3">
-            Add Product
-          </Link>
         </div>
       </div>
       <AddCategory

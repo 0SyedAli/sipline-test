@@ -22,7 +22,7 @@ export default function UploadPhoto({ onImageUpload }) {
   
 
   return (
-    <div style={styles.container}>
+    <div  className="upload_img_cont">
       {selectedImage ? (
         <div style={styles.imageContainer}>
           <img src={selectedImage} alt="Selected" style={styles.imagePreview} />
