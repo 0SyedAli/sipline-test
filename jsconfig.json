@@ -6,7 +6,8 @@
       "@/hooks/*": ["src/hooks/*"],
       "@/pages/*": ["src/pages/*"],
       "@/images/*": ["public/images/*"],
-      "@/fonts/*": ["public/fonts/*"]
+      "@/fonts/*": ["public/fonts/*"],
+      "@/styles/*": ["public/styles/*"]
     }
   }
 }

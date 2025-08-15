@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
-import SpinnerLoading from "./Spinner/SpinnerLoading";
+import SpinnerLoading from "./SpinnerLoading";
 
 const AllReviews = ({ limit = null }) => {
     const [rating, setRating] = useState(null);
@@ -22,7 +22,7 @@ const AllReviews = ({ limit = null }) => {
             setAdminId(adminData._id);
             setShopId(adminData.shopId);
         } else {
-            router.push("/auth/login");
+            // router.push("/auth/login"); 2
         }
     }, [router]);
 

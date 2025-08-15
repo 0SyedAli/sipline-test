@@ -30,7 +30,7 @@ const ManageProduct = () => {
       setAdminId(adminData._id);
     } else {
       console.error("Admin not found or missing '_id' property");
-      router.push("/auth/add-services");
+      // router.push("/auth/add-services");
     }
   }, [router]);
 

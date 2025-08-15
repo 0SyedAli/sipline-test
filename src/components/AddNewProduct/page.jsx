@@ -58,7 +58,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
       setAdminId(adminData._id);
     } else {
       toast.error("Invalid admin data. Redirecting...");
-      router.push("/auth/add-services");
+      // router.push("/auth/add-services");
     }
   }, [router]);
 
@@ -73,7 +73,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/AllCategoriesByAdmin?adminId=${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/AllCategoriesByAdmin?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
@@ -123,7 +123,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
 
       setIsLoading(true);
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/addProduct`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/addProduct`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

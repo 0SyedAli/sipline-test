@@ -1,17 +1,26 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 
-export default function UploadImageFile({ onFileChange, existingImage  }) {
-   const [previewUrl, setPreviewUrl] = useState(existingImage || null);
+export default function UploadImageFile({ onFileChange, existingImage }) {
+  // const [previewUrl, setPreviewUrl] = useState(existingImage || null);
+  // console.log("b1:", existingImage);
+  // console.log("b2:", previewUrl);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
+  // Initialize previewUrl when existingImage changes
+  useEffect(() => {
+    if (existingImage) {
+      setPreviewUrl(existingImage);
+    }
+  }, [existingImage]);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       // Create preview URL
       const preview = URL.createObjectURL(file);
       setPreviewUrl(preview);
-      
+
       // Send the actual File object to parent
       onFileChange(file);
     }

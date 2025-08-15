@@ -30,7 +30,7 @@ const ErrorHandler = ({ err }) => {
         // Handle session expiry
         if (status === 401) {
           clearSession();
-          router.push("/auth/login"); // Redirect to login
+          // router.push("/auth/login"); 2 // Redirect to login
         }
       } else if (status === 404) {
         setErrorMessage(`Unknown API Called: ${err?.response?.config?.url}. Please ensure the API exists.`);

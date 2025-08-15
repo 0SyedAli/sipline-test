@@ -24,7 +24,7 @@ const DashboardPanel = ({ activeTab }) => {
       setAdminId("681120f22f4715831181a9c4"); // Use the actual admin ID from session storage
     } else {
       console.error("User not found or missing '_id' property");
-      router.push("/auth/add-services");
+      // router.push("/auth/add-services");
     }
   }, [router]);
 

@@ -2,9 +2,9 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchReviews, fetchRating } from "../lib/redux/store/slices/reviewsSlice";
-import SpinnerLoading from "./Spinner/SpinnerLoading";
 import { FaStar } from "react-icons/fa";
 import Image from "next/image";
+import SpinnerLoading from "./SpinnerLoading";
 
 const AllReviews = ({ limit = null, shopId, adminId }) => {
     const dispatch = useDispatch();

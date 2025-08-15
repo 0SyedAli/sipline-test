@@ -5,7 +5,7 @@ const AuthWrapper = ({ children }) => {
   const token = sessionStorage.getItem("token");
 
   if (!token || tokenExpired(token)) {
-    router.push("/auth/login");
+    // router.push("/auth/login"); 2
   }
 
   return children;

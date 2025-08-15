@@ -45,7 +45,7 @@ const Discount = () => {
       setAdminId("681120f22f4715831181a9c4");
     } else {
       console.error("Admin not found");
-      router.push("/auth/add-services");
+      // router.push("/auth/add-services");
     }
   }, [router]);
 
@@ -242,7 +242,7 @@ const Discount = () => {
           <div className="row">
             <div className="col-12 col-md-10 col-lg-8 col-xxl-6">
               <div className="row">
-                <div className="col-6">
+                <div className="col-12 coupon_img">
                   <UploadImage
                     onFileChange={handleFileChange}
                     existingImage={couponId ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${formData.couponImage}` : null}

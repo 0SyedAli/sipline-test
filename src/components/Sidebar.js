@@ -20,7 +20,7 @@ const SideBar = () => {
       setAdminData(adminData);
     } else {
       console.error("User not found or missing '_id' property");
-      router.push("/auth/login");
+      // router.push("/auth/login"); 2
     }
   }, [router]);
 
@@ -40,12 +40,12 @@ const SideBar = () => {
     setActiveTab(pathname);
   }, [pathname]);
 
-  const handleTabClick = (tab) => {
-    setLoading(true);
-    setActiveTab(tab);
-    router.push(tab);
-  };
-
+const handleTabClick = (tab) => {
+  setLoading(true);
+  setActiveTab(tab);
+  setIsSidebarOpen(false); // Close sidebar on click
+  router.push(tab);
+};
   const handleHover = (href) => {
     router.prefetch(href);
   };

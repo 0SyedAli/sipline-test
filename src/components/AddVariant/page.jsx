@@ -35,7 +35,7 @@ export const AddVariant = ({ btntitle, onClose }) => {
       setAdminId(adminData._id); // Set adminId if available
     } else {
       console.error("User not found or missing 'id' property");
-      router.push("/auth/add-services"); // Redirect to add services if user is invalid
+      // router.push("/auth/add-services"); // Redirect to add services if user is invalid
     }
   }, [router]); // Runs once on mount
 
@@ -50,7 +50,7 @@ export const AddVariant = ({ btntitle, onClose }) => {
     try {
       setLoading(true); // Start loading
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/AllCategoriesByAdmin?adminId=${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/AllCategoriesByAdmin?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
@@ -75,7 +75,7 @@ export const AddVariant = ({ btntitle, onClose }) => {
     try {
       setLoading3(true); // Start loading
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/getAllProducts?adminId=${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/getAllProducts?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
@@ -126,7 +126,7 @@ export const AddVariant = ({ btntitle, onClose }) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/addVariant`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/addVariant`,
         formData,
         {
           headers: {

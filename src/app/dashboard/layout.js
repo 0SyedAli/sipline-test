@@ -6,12 +6,12 @@ import { useEffect } from "react";
 import { isAuthenticated } from "../../utils/Auth";
 export default function Dashboard({ children }) {
   const router = useRouter();
-  useEffect(() => {
-    const isAuth = isAuthenticated();
-    if (!isAuth) {
-      router.replace("/auth/login");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const isAuth = isAuthenticated();
+  //   if (!isAuth) {
+  //     router.replace("/auth/login");
+  //   }
+  // }, [router]);
 
 
   return (

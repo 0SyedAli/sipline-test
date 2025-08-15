@@ -34,7 +34,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
       setAdminId(adminData._id);
     } else {
       console.error("User not found or missing 'id' property");
-      router.push("/auth/add-services");
+      // router.push("/auth/add-services");
     }
   }, [router]);
 
@@ -51,7 +51,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/AllCategoriesByAdmin?adminId=${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/AllCategoriesByAdmin?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
@@ -72,7 +72,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
     try {
       setLoading3(true);
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/getProductById?productId=${productId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/getProductById?productId=${productId}`
       );
 
       if (response?.data?.success) {
@@ -139,7 +139,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/admin/updateProduct`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateProduct`,
         formData,
         {
           headers: {

@@ -26,7 +26,7 @@ const Discounts = () => {
       setAdminId("681120f22f4715831181a9c4");
     } else {
       console.error("Admin not found");
-      router.push("/auth/add-services");
+      // router.push("/auth/add-services");
     }
   }, [router]);
 

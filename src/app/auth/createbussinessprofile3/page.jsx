@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useHeader } from "@/components/context/HeaderContext";
-import { useSelector } from "react-redux";
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
 import { toast } from "react-toastify";
 export default function CreateBusinessProfilePage3() {
@@ -13,12 +12,19 @@ export default function CreateBusinessProfilePage3() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(""); // Store only one error at a time
   const [success, setSuccess] = useState(""); // Store only one error at a time
+  const [shopId, setShopId] = useState(""); // Store only one error at a time
   const router = useRouter();
   const header = useHeader();
   const [adminId, setAdminId] = useState("");
-  const formData = useSelector((state) => state.multiStepForm);
-  
 
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const shopId = searchParams.get("shop_id");
+    if (shopId) {
+      setShopId(shopId);
+    }
+  }, [searchParams]);
   useEffect(() => {
     const adminData = sessionStorage.getItem("admin");
 
@@ -84,20 +90,14 @@ export default function CreateBusinessProfilePage3() {
 
     const apiPayload = new FormData();
     apiPayload.append("adminId", adminId);
-    apiPayload.append("postalCode", formData?.shopData?.postalCode);
-    apiPayload.append("cookingTime", formData?.shopData?.cookingTime);
-    apiPayload.append("category", JSON.stringify(formData?.shopData?.categories));
-    apiPayload.append("barDetails", JSON.stringify(formData?.shopData?.bar_detail));
+    apiPayload.append("shopId", shopId);
     apiPayload.append("workingDays", JSON.stringify(formattedWorkingDays));
     apiPayload.append("longitude", 67.001137);
     apiPayload.append("latitude", 24.860735);
     apiPayload.append("address", "static address");
-    if (formData?.shopData?.shopImage) {
-      apiPayload.append("shopImage", formData?.shopData?.shopImage);
-    }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/createShop`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateShop`, {
         method: "POST",
         body: apiPayload,
       });

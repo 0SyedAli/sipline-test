@@ -32,8 +32,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  // const [deviceToken, setDeviceToken] = useState("Token");
-  // const [deviceInfo, setDeviceInfo] = useState("Some Info");
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const router = useRouter();
   useEffect(() => {
@@ -99,38 +97,6 @@ export default function LoginPage() {
       }
 
       // old logic for handling
-
-      // if (response?.data?.success === true) {
-      //   if (response?.data?.data) {
-      //     if (response?.profileCreated === true && response?.shopCreated === true) {
-      //       setSuccess(true);
-      //       toast.success(response?.data?.msg || "Login successful!");
-      //       setError(null);
-
-      //       // Store data in sessionStorage
-      //       sessionStorage.setItem("token", response?.data?.accessToken);
-      //       sessionStorage.setItem("admin", JSON.stringify(response?.data?.data));
-      //       router.push("/dashboard");
-      //     }
-      //   } else if (response?.profileCreated === false) {
-      //     router.push("createprofile");
-      //     // toast.error(result?.msg || "Invalid data received");
-      //     // setError(result?.msg || "Invalid data received");
-      //   } else if (response?.shopCreated === false) {
-      //     router.push("createbussinessprofile");
-      //   } else {
-      //     toast.error(response?.data?.msg || "Login failed");
-      //     setError(response?.data?.msg || "Login failed");
-      //     setSuccess(false);
-      //     setIsLoading(false); // Re-enable button on failure
-      //   }
-      // }
-      // else {
-      //   // Handle login failure
-      //   setError(response?.data?.msg || "Login failed");
-      //   setSuccess(false);
-      //   setIsLoading(false); // Re-enable button on failure
-      // }
     } catch (error) {
       // Handle validation or request errors
       console.log(error);
@@ -165,7 +131,7 @@ export default function LoginPage() {
               type={show ? "text" : "password"}
               id="password"
               imageSrc={passImage}
-              show={show}
+              show={!show}
               handleClick={handleClick}
               value={password}
               onChange={(e) => setPassword(e.target.value)}

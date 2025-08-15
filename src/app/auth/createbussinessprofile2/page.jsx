@@ -1,27 +1,34 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation"; // Import useRouter
 import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
 import { Textarea } from "@chakra-ui/react";
 import { RxCross2 } from "react-icons/rx";
 import { useHeader } from "@/components/context/HeaderContext";
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
-import { updateShopData } from "src/lib/redux/store/slices/multiStepFormSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function CreateBusinessProfilePage2() {
   const [barDetail, setBarDetail] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [adminId, setAdminId] = useState(""); // Loading state
   const [categories] = useState(["Category1", "Category2", "Category3", "Category4"]);
+  const [shopId, setShopId] = useState(""); // Loading state
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [tag, setTag] = useState("");
-  const dispatch = useDispatch();
   const router = useRouter(); // Initialize router
   const header = useHeader();
-  const formData = useSelector((state) => state.multiStepForm);
-  
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const shopId = searchParams.get("shop_id");
+    if (shopId) {
+      setShopId(shopId);
+    }
+  }, [searchParams]);
+
   const handleCategoryAdd = () => {
     if (tag && !selectedCategories.includes(tag)) {
       setSelectedCategories((prev) => [...prev, tag]);
@@ -33,30 +40,94 @@ export default function CreateBusinessProfilePage2() {
     setSelectedCategories((prev) => prev.filter((cat) => cat !== category));
   };
 
-  const handleNext = () => {
-    if (!selectedCategories || !barDetail) {
-      setError("All fields are required.");
-      setIsLoading(false);
-      setSuccess(false);
-      return;
+  useEffect(() => {
+    const adminData = sessionStorage.getItem("admin");
+
+    if (adminData) {
+      try {
+        const parsedAdminData = JSON.parse(adminData);
+        setAdminId(parsedAdminData._id);
+      } catch (error) {
+        console.error("Error parsing admin data from sessionStorage:", error);
+      }
+    } else {
+      router.replace("/auth/login"); // Redirect if no admin data
     }
 
-    setError(null); // Clear any existing errors
+  }, []);
+  // const handleNext = () => {
+  //   if (!selectedCategories || !barDetail) {
+  //     setError("All fields are required.");
+  //     setIsLoading(false);
+  //     setSuccess(false);
+  //     return;
+  //   }
+
+  //   setError(null); // Clear any existing errors
+  //   setIsLoading(true);
+
+  //   // Dispatch to update Redux state
+  //   dispatch(
+  //     updateShopData({
+  //       categories: selectedCategories, // Pass all selected categories
+  //       bar_detail: barDetail,
+  //     })
+  //   );
+
+  //   setIsLoading(false);
+  //   setSuccess(true);
+
+  //   // Navigate to the next page
+  //   router.push("createbussinessprofile3");
+  // };
+
+  const handleNext = async (e) => {
+    e.preventDefault();
+
     setIsLoading(true);
 
-    // Dispatch to update Redux state
-    dispatch(
-      updateShopData({
-        categories: selectedCategories, // Pass all selected categories
-        bar_detail: barDetail,
-      })
-    );
+    const apiPayload = new FormData();
+    apiPayload.append("adminId", adminId);
+    apiPayload.append("shopId", shopId);
+    apiPayload.append("category", selectedCategories);
+    apiPayload.append("barDetails", barDetail);
 
-    setIsLoading(false);
-    setSuccess(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateShop`, {
+        method: "POST",
+        body: apiPayload,
+      });
 
-    // Navigate to the next page
-    router.push("createbussinessprofile3");
+      // Check if the response status is OK
+      if (!response.ok) {
+        const errorResult = await response.json();
+        throw new Error(errorResult.message || "Failed to Create Shop");
+      }
+
+      const result = await response.json();
+
+      // Handle success scenario
+      if (result?.success) {
+        setSuccess(true);
+        toast.success(result?.msg || "Shop Created successfully!");
+        setError(null);
+        // sessionStorage.setItem("admin", JSON.stringify(result?.data));
+             router.push(`createbussinessprofile3?shop_id=${result?.data?._id}`);
+      } else {
+        // Handle server-side failure
+        setSuccess(false);
+        toast.error(result?.msg || "Invalid data received");
+        setError(result?.msg || "Invalid data received");
+      }
+
+    } catch (err) {
+      // General error handling
+      console.error("API Error:", err);
+      setError(err.message || "An unexpected error occurred");
+      toast.error(err.message || "An unexpected error occurred");
+      setIsLoading(false);
+      setSuccess(false);
+    }
   };
 
   return (
