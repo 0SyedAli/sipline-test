@@ -32,7 +32,7 @@ const SideBar = () => {
     { href: "/dashboard/transaction-history", icon: "/images/calendar-tick.png", text: "Transaction History" },
     { href: "/dashboard/discounts", icon: "/images/li6.png", text: "Discounts" },
     { href: "/dashboard/privacy-policy", icon: "/images/li7.png", text: "Privacy Policy" },
-    { href: "/dashboard/help-support", icon: "/images/li8.png", text: "Help & Support" },
+    { href: "/dashboard/terms-&-condition", icon: "/images/li8.png", text: "Terms & Conditions" },
     { href: "/auth/login?action=logout", icon: "/images/li9.png", text: "Log Out" },
   ];
 

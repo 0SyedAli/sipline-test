@@ -3,7 +3,7 @@ import { AuthBtn } from "../AuthBtn/AuthBtn"
 import InputField from "../Form/InputField"
 import Modal from "./layout"
 import "./modal.css"
-
+import { toast } from "react-toastify";
 function RefundNow({
   isOpen,
   onClose,
@@ -17,9 +17,8 @@ function RefundNow({
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
 
-  console.log(selectedRefund?.transactionId);
   const handleSubmit = async () => {
-    if (!amount || isNaN(amount)) {
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
       setError("Please enter a valid amount")
       return
     }
@@ -28,7 +27,7 @@ function RefundNow({
       setIsLoading(true)
       setError("")
 
-      const referenceNumber = parseInt("769082", 10)
+      const referenceNumber = parseInt(selectedRefund?.transactionId || "769248", 10)
 
       if (isNaN(referenceNumber)) {
         setError("Invalid transaction ID")
@@ -36,58 +35,80 @@ function RefundNow({
         return
       }
 
-      console.log("Sending refund:", {
-        referenceNumber,
-        amount: Number(amount)
+      // console.log("Sending refund via proxy:", {
+      //   referenceNumber,
+      //   amount: Number(amount)
+      // })
+
+      // Call our Next.js API route
+      const response = await fetch("/api/process-refund", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reference_number: referenceNumber,
+          amount: Number(amount),
+          username,
+          password
+        }),
       })
 
-      const response = await fetch(
-        "https://api.sandbox.paycreategateway.com/api/v2/transactions/refund",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Basic " + btoa(`${username}:${password}`),
-            "Accept": "*/*",
-          },
-          mode: "cors", // Explicitly set CORS mode
-          body: JSON.stringify({
-            reference_number: referenceNumber,
-            amount: Number(amount),
-          }),
-        }
-      )
+      // const result = await response.json()
 
-      console.log(response)
+      // console.log("Proxy response:", result)
 
-      // Check if response is ok first
-      if (!response.ok) {
-        // Handle 401 specifically
-        if (response.status === 401) {
-          setError("Authentication failed. Please check your credentials.")
-          setIsLoading(false)
-          return
-        }
-
-        // Handle other HTTP errors
-        const errorText = await response.text()
-        throw new Error(`HTTP ${response.status}: ${errorText}`)
-      }
-
+      // if (response.ok) {
+      //   // Check if the payment gateway API call was successful
+      //   if (result.error) {
+      //     // Payment gateway returned an error
+      //     setError(result.error + (result.details ? `: ${result.details}` : ''))
+      //   } else if (result.status === "Approved" || result.status === "approved") {
+      //     // SUCCESS: Payment was approved by gateway
+      //     onClose()
+      //     setAmount("")
+      //     if (onRefundSuccess) {
+      //       onRefundSuccess(result) // This will update status to "Refund"
+      //     }
+      //   } else {
+      //     // Payment gateway returned non-approved status
+      //     setError(`Refund failed. Status: ${result.status || "Unknown"}`)
+      //   }
+      // } else {
+      //   // Proxy or network error
+      //   if (result.error === "Payment gateway returned an error page") {
+      //     setError("Payment service is temporarily unavailable. Please try again later.")
+      //   } else if (result.rawResponse) {
+      //     setError(`Unexpected response from server: ${result.rawResponse.substring(0, 100)}...`)
+      //   } else {
+      //     setError(result.message || result.error || `Refund failed (Status: ${response.status})`)
+      //   }
       const result = await response.json()
 
-      onClose()
-      setAmount("")
-      if (onRefundSuccess) {
-        onRefundSuccess(result)
+      // console.log("Proxy response:", result)
+
+      if (response.ok) {
+        if (result.status?.toLowerCase() === "approved") {
+          toast.success(result?.msg || "Refund approved successfully ✅")
+          onClose()
+          setAmount("")
+          if (onRefundSuccess) {
+            onRefundSuccess(result) // update status to "Refund"
+          }
+        } else if (result.status?.toLowerCase() === "error") {
+          toast.error(result?.error_message || result?.msg || "Refund failed ❌")
+          onClose()
+        } else {
+          toast.error(`Refund failed. Status: ${result.status || "Unknown"}`)
+          onClose()
+        }
+      } else {
+        toast.error(result?.message || result?.error || `Refund failed (Status: ${response.status})`)
+        onClose()
       }
     } catch (err) {
-      // More specific error handling
-      if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
-        setError("Network error. Please check your connection.")
-      } else {
-        setError(err.message || "An unexpected error occurred")
-      }
+      console.error("Request error:", err)
+      setError(err.message || "An unexpected error occurred")
     } finally {
       setIsLoading(false)
     }
@@ -101,19 +122,26 @@ function RefundNow({
           <strong>Reference Number:</strong>{" "}
           {selectedRefund?.transactionId || "N/A"}
         </p>
-        <form>
+        <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
           <div style={{ margin: "35px 0 40px", height: "150px" }}>
             <label className="mb-2">Add Amount</label>
             <InputField
-              type="text"
-              placeholder="$10"
+              type="number"
+              step="0.01"
+              min="0.01"
+              placeholder="$10.00"
               id="refundAmount"
               classInput="classInput"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
+              required
             />
           </div>
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          {error && (
+            <div style={{ color: "red", marginBottom: "15px", padding: "10px", backgroundColor: "#ffeeee", borderRadius: "4px" }}>
+              <strong>Error:</strong> {error}
+            </div>
+          )}
           <div className="sort_btn justify-content-end gap-2">
             <button
               onClick={() => {
@@ -123,6 +151,7 @@ function RefundNow({
               }}
               type="button"
               className="themebtn4 green btn"
+              disabled={isLoading}
             >
               Cancel
             </button>
@@ -130,7 +159,7 @@ function RefundNow({
               title={isLoading ? "Processing..." : btntitle}
               onClick={handleSubmit}
               location_btn="themebtn4 green btn"
-              type="button"
+              type="submit"
               disabled={isLoading}
             />
           </div>

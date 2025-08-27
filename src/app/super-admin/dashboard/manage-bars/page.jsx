@@ -166,51 +166,59 @@ export default function ManageBarPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {currentBars.map((shop) => (
-                    <tr key={shop._id}>
-                      <td>
-                        <div className="d-flex align-items-center gap-3">
-                          <ShopImage shop={shop} />
-                          <div>
-                            <div className="fw-medium text-dark text-nowrap">{shop.barName || "Unknown Bar"}</div>
-                            <small className="text-muted">
-                              {shop.barDetails
-                                ? shop.barDetails.split(" ").slice(0, 4).join(" ")
-                                : "No details available"}
-                            </small>
+                  {currentBars.length > 0 ? (
+                    currentBars.map((shop) => (
+                      <tr key={shop._id}>
+                        <td>
+                          <div className="d-flex align-items-center gap-3">
+                            <ShopImage shop={shop} />
+                            <div>
+                              <div className="fw-medium text-dark text-nowrap">{shop.barName || "Unknown Bar"}</div>
+                              <small className="text-muted">
+                                {shop.barDetails
+                                  ? shop.barDetails.split(" ").slice(0, 4).join(" ")
+                                  : "No details available"}
+                              </small>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="text-muted ">
-                        {shop.address
-                          ? shop.address.split(" ").slice(0, 4).join(" ")
-                          : "No address available"}
-                      </td>
-                      <td>
-                        <div className="d-flex align-items-center gap-2">
-                          <span
-                            className={`badge bg-${getStatusColor(shop.avgRating || 0)} rounded-pill`}
-                            style={{ width: "8px", height: "8px" }}
-                          ></span>
-                          <span className="text-muted  text-nowrap">{formatWorkingDays(shop.workingDays)}</span>
-                        </div>
-                      </td>
-                      <td className="text-muted  text-nowrap">{formatJoiningDate(shop._id)}</td>
-                      <td>
-                        <button
-                          className="btn btn-outline-secondary btn-sm text-nowrap"
-                          onClick={() => {
-                            console.log(`View shop details for: ${shop._id}`)
-                            // You can implement navigation to shop details page here
-                            router.push(`manage-bars/bar/${shop._id}`)
-                          }}
-                        >
-                          View Detail
-                        </button>
+                        </td>
+                        <td className="text-muted ">
+                          {shop.address
+                            ? shop.address.split(" ").slice(0, 4).join(" ")
+                            : "No address available"}
+                        </td>
+                        <td>
+                          <div className="d-flex align-items-center gap-2">
+                            <span
+                              className={`badge bg-${getStatusColor(shop.avgRating || 0)} rounded-pill`}
+                              style={{ width: "8px", height: "8px" }}
+                            ></span>
+                            <span className="text-muted  text-nowrap">{formatWorkingDays(shop.workingDays)}</span>
+                          </div>
+                        </td>
+                        <td className="text-muted  text-nowrap">{formatJoiningDate(shop._id)}</td>
+                        <td>
+                          <button
+                            className="btn btn-outline-secondary btn-sm text-nowrap"
+                            onClick={() => {
+                              console.log(`View shop details for: ${shop._id}`)
+                              // You can implement navigation to shop details page here
+                              router.push(`manage-bars/bar/${shop._id}`)
+                            }}
+                          >
+                            View Detail
+                          </button>
 
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center py-4 text-muted">
+                        No Bars found.
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

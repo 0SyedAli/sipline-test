@@ -256,60 +256,68 @@ export default function MangeOrder() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentOrders.map((order) => (
-                                    <tr key={order._id}>
+                                {currentOrders.length > 0 ? (
+                                    currentOrders.map((order) => (
+                                        <tr key={order._id}>
 
-                                        <td>
-                                            <div className="d-flex align-items-center gap-2">
-                                                <CustomerImage order={order} />
-                                                <div>
-                                                    <div className="fw-medium text-nowrap">{order.userId?.fullName || "Unkown User"}</div>
-                                                    <small className="text-muted">New Customer</small>
+                                            <td>
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <CustomerImage order={order} />
+                                                    <div>
+                                                        <div className="fw-medium text-nowrap">{order.userId?.fullName || "Unkown User"}</div>
+                                                        <small className="text-muted">New Customer</small>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
+                                            </td>
 
-                                        <td className="text-muted font-monospace">#{order._id.slice(-8)}</td>
-                                        <td className="text-muted text-nowrap">{order.date}</td>
-                                        <td className="text-muted">
-                                            {order.product.length} item{order.product.length !== 1 ? "s" : ""}
-                                            <br />
-                                            <small className="text-muted">
-                                                {order.product
-                                                    .map((p) => p.productId?.name)
-                                                    .filter(Boolean)
-                                                    .join(", ")
-                                                    .slice(0, 50)}
-                                                {order.product
-                                                    .map((p) => p.productId?.name)
-                                                    .filter(Boolean)
-                                                    .join(", ").length > 50
-                                                    ? "..."
-                                                    : ""}
-                                            </small>
-                                        </td>
-                                        <td className="fw-medium">₦{order.grandTotal.toFixed(2)}</td>
-                                        <td>{getStatusBadge(order.status)}</td>
-                                        <td>
-                                            <div className="dropdown">
-                                                <button
-                                                    className="btn btn-outline-secondary btn-sm text-nowrap"
-                                                    type="button"
-                                                    onClick={() => viewOrderDetails(order._id)}
-                                                >
-                                                    View Details
-                                                </button>
-                                                {/* <ul className="dropdown-menu">
+                                            <td className="text-muted font-monospace">#{order._id.slice(-8)}</td>
+                                            <td className="text-muted text-nowrap">{order.date}</td>
+                                            <td className="text-muted">
+                                                {order.product.length} item{order.product.length !== 1 ? "s" : ""}
+                                                <br />
+                                                <small className="text-muted">
+                                                    {order.product
+                                                        .map((p) => p.productId?.name)
+                                                        .filter(Boolean)
+                                                        .join(", ")
+                                                        .slice(0, 50)}
+                                                    {order.product
+                                                        .map((p) => p.productId?.name)
+                                                        .filter(Boolean)
+                                                        .join(", ").length > 50
+                                                        ? "..."
+                                                        : ""}
+                                                </small>
+                                            </td>
+                                            <td className="fw-medium">₦{order.grandTotal.toFixed(2)}</td>
+                                            <td>{getStatusBadge(order.status)}</td>
+                                            <td>
+                                                <div className="dropdown">
+                                                    <button
+                                                        className="btn btn-outline-secondary btn-sm text-nowrap"
+                                                        type="button"
+                                                        onClick={() => viewOrderDetails(order._id)}
+                                                    >
+                                                        View Details
+                                                    </button>
+                                                    {/* <ul className="dropdown-menu">
                                                     <li>
                                                         <button className="dropdown-item" >
                                                             View Details
                                                         </button>
                                                     </li>
                                                 </ul> */}
-                                            </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="6" className="text-center py-4 text-muted">
+                                            No Orders found.
                                         </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                     </div>

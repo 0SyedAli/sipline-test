@@ -31,7 +31,7 @@ const SideBar2 = () => {
     { href: "/super-admin/dashboard/manage-refunds", icon: "/images/li4.png", text: "Manage Refunds" },
     { href: "/super-admin/dashboard/features", icon: "/images/calendar-tick.png", text: "Features Ads" },
     { href: "/super-admin/dashboard/privacy-policy", icon: "/images/li7.png", text: "Privacy Policy" },
-    { href: "/super-admin/dashboard/help-support", icon: "/images/li8.png", text: "Help & Support" },
+    { href: "/super-admin/dashboard/terms-&-condition", icon: "/images/li8.png", text: "Terms & Conditions" },
     { href: "/super-admin/auth/login?action=logout", icon: "/images/li9.png", text: "Log Out" },
   ];
 

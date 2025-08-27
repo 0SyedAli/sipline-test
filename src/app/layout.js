@@ -5,7 +5,6 @@ import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "react-toastify/dist/ReactToastify.css";
 import BootstrapClients from '@/components/BootstrapClients';
 import { Provider } from "react-redux";
 import { store } from "../lib/redux/store/index";

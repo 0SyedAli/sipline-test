@@ -12,8 +12,10 @@ import {
   BsXCircle,
   BsClock,
 } from "react-icons/bs"
+import 'react-toastify/dist/ReactToastify.css';
 import SpinnerLoading from "@/components/SpinnerLoading"
 import RefundNow from "@/components/Modal/Refund" // adjust import path
+import { toast } from "react-toastify"
 
 export default function RefundDetailPage({ params }) {
   const [refundData, setRefundData] = useState(null)
@@ -50,7 +52,15 @@ export default function RefundDetailPage({ params }) {
       setLoading(false)
     }
   }
+  // In your RefundDetailPage component
+  const handleRefundSuccess = (result) => {
+    // console.log("Refund successful:", result);
+    // Update status to "Refund" only if the payment was successful
+    updateRefundStatus("Refund");
 
+    // Optional: Show success message
+    alert("Refund processed successfully! Status updated to Refund.");
+  };
   const updateRefundStatus = async (status) => {
     try {
       setUpdatingStatus(true)
@@ -370,7 +380,7 @@ export default function RefundDetailPage({ params }) {
         onClose={() => setIsRefundModalOpen(false)}
         btntitle="Refund Now"
         selectedRefund={refundData}
-        onRefundSuccess={() => updateRefundStatus("Refund")}
+        onRefundSuccess={handleRefundSuccess} // Use the updated handler
         username={process.env.NEXT_PUBLIC_REFUND_USER}
         password={process.env.NEXT_PUBLIC_REFUND_PASS}
       />
