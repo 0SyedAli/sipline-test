@@ -4,9 +4,10 @@ const OverviewCards = ({ ovimg, title, price, discount }) => {
       <img src={ovimg} alt="User" />
       <p>{title || "Title"}</p>
       <h2>{price ?? "$0.00"}</h2>
-      <h5>
+      {discount && <h5>
         {discount ?? "-"}
       </h5>
+      }
     </div>
   );
 };

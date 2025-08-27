@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import NotificationModal from "./notificationModalCont/NotificationModal";
+import NotificationModal from "./superAdmin/NotificationModal";
 import Image from "next/image";
 import { useDisclosure } from "@chakra-ui/react";
 import AddCategory from "./Modal/AddCategory";

@@ -19,7 +19,7 @@ export default function CreateBusinessProfilePage() {
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [adminId, setAdminId] = useState(""); // Loading state
-  const [selectedCookingTimeId, setSelectedCookingTimeId] = useState("");
+  const [selectedCookingTime, setSelectedCookingTime] = useState("");
   const cookingTime = ["30 min", "40 min", "50 min"];
   const [existingImage, setExistingImage] = useState(defaultProfileImage);
 
@@ -53,7 +53,7 @@ export default function CreateBusinessProfilePage() {
     apiPayload.append("adminId", adminId);
     apiPayload.append("shopImage", shopImage);
     apiPayload.append("postalCode", postalCode);
-    apiPayload.append("cookingTime", selectedCookingTimeId);
+    apiPayload.append("cookingTime", selectedCookingTime);
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/createShop`, {
@@ -121,7 +121,16 @@ export default function CreateBusinessProfilePage() {
                 required
               />
               <label>Cooking Time</label>
-              <div className="inputField">
+              <InputField
+                type="text"
+                id="cooking_time"
+                classInput="classInput"
+                placeholder="Enter cooking time (e.g. 30 mins)"
+                value={selectedCookingTime}
+                onChange={(e) => setSelectedCookingTime(e.target.value)}
+                required
+              />
+              {/* <div className="inputField">
                 <select
                   className="form-select input_select"
                   aria-label="Cooking Time Range"
@@ -131,7 +140,7 @@ export default function CreateBusinessProfilePage() {
                   }
                 >
                   <option value="" defaultValue>
-                    Search Category
+                    Cooking Time Range
                   </option>
                   {cookingTime?.map((time, index) => (
                     <option key={index} value={time}>
@@ -139,7 +148,7 @@ export default function CreateBusinessProfilePage() {
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
 
               {error && <p style={{ color: "red" }}>{error}</p>}
               <AuthBtn

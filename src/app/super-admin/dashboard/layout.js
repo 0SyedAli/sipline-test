@@ -6,12 +6,12 @@ import { useEffect } from "react";
 import { isAuthenticated } from "src/utils/AuthAdmin";
 export default function Dashboard({ children }) {
   const router = useRouter();
-  useEffect(() => {
-    const isAuth = isAuthenticated();
-    if (!isAuth) {
-      router.replace("/super-admin/auth/login");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   const isAuth = isAuthenticated();
+  //   if (!isAuth) {
+  //     router.replace("/super-admin/auth/login");
+  //   }
+  // }, [router]);
 
 
   return (

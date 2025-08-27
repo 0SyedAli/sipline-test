@@ -4,7 +4,7 @@ import InputField from "@/components/Form/InputField";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import axios from "axios";
-import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
+import SpinnerLoading from "@/components/SpinnerLoading";
 import UploadImage from "@/components/UploadImage";
 const AddDiscountWrapper = () => {
   return (
@@ -228,7 +228,14 @@ const Discount = () => {
   };
 
   if (loading && couponId) {
-    return <SpinnerLoading />;
+    return (
+      <div className="page pt-4 px-0">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+          <SpinnerLoading />
+        </div>
+      </div>
+    )
+      ;
   }
 
   return (

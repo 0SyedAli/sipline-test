@@ -114,6 +114,7 @@ const UserProfile = () => {
       console.error(error);
     }
   };
+console.log(selectedCategories);
 
   const handleUpdateShop = async (e) => {
     e.preventDefault();
@@ -131,7 +132,7 @@ const UserProfile = () => {
 
     // Append the image file if it exists
     if (imageFile) {
-      formDataToSend.append("image", imageFile);
+      formDataToSend.append("shopImage", imageFile);
     }
 
     // Append other form data
@@ -140,7 +141,7 @@ const UserProfile = () => {
     formDataToSend.append("cookingTime", formData.cookingTime);
     formDataToSend.append("barDetails", formData.barDetails);
     formDataToSend.append("address", formData.address);
-    formDataToSend.append("categories", JSON.stringify(selectedCategories));
+    formDataToSend.append("category", JSON.stringify(selectedCategories));
     formDataToSend.append("adminId", adminId);
     formDataToSend.append("shopId", shopId);
 

@@ -67,10 +67,10 @@ const NewOrder = ({ activeTab }) => {
   return (
     <div className="py-4 dash_list page">
       {loading ? (
-        <div className="main_dash2">
-          <h3>
+        <div className="page pt-4 px-0">
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
             <SpinnerLoading />
-          </h3>
+          </div>
         </div>
       ) : orders && orders.length === 0 ? (
         <p className="mt-5">No orders found with status: {activeTab}.</p>

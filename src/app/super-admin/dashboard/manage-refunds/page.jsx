@@ -137,7 +137,7 @@ export default function RefundRequestsPage() {
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gx-4" style={{ gap: "20px" }}>
         <div>
           <h2 className="mb-0 fw-bold">Refund Requests</h2>
-          <p className="text-muted mb-0">Total Requests: {filteredRequests.length}</p>
+          <p className="text-muted mb-0">Total Requests: {filteredRequests && filteredRequests.length}</p>
         </div>
         <div className="d-flex gap-2 w-md-50">
           <div className="input-group">
@@ -171,107 +171,134 @@ export default function RefundRequestsPage() {
                 </tr>
               </thead>
               <tbody>
-                {currentRequests.map((request, index) => (
-                  <tr key={request._id}>
-                    <td className="py-3">
-                      <div className="d-flex align-items-center">
-                        <div
-                          className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3"
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            backgroundColor: generateAvatar(request.userId),
-                            fontSize: "14px",
-                          }}
-                        >
-                          {request.userId ? request.userId.slice(-2).toUpperCase() : "U"}
-                        </div>
-                        <div>
-                          <div className="fw-semibold">
-                            User {request.userId ? request.userId.slice(-4) : "Unknown"}
+                {currentRequests.length > 0 ? (
+                  currentRequests.map((request) => (
+                    <tr key={request._id}>
+                      <td className="py-3">
+                        <div className="d-flex align-items-center">
+                          <div
+                            className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3"
+                            style={{
+                              width: "40px",
+                              height: "40px",
+                              backgroundColor: generateAvatar(request.userId),
+                              fontSize: "14px",
+                            }}
+                          >
+                            {request.userId ? request.userId.slice(-2).toUpperCase() : "U"}
                           </div>
-                          <small className="text-muted text-nowrap">ID: {request.userId || "N/A"}</small>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className="fw-medium">{request.transactionId || "N/A"}</span>
-                    </td>
-                    <td className="py-3">
-                      <div className="d-flex align-items-center">
-                        <span
-                          className="rounded-circle me-2"
-                          style={{
-                            width: "8px",
-                            height: "8px",
-                            backgroundColor:
-                              request.status === "Approved"
-                                ? "#28a745"
-                                : request.status === "Pending"
-                                  ? "#ffc107"
-                                  : "#dc3545",
-                          }}
-                        ></span>
-                        <span className="text-truncate" style={{ maxWidth: "200px" }}>
-                          {request.reason || "No reason provided"}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <span className={getStatusBadgeClass(request.status)}>{request.status || "Unknown"}</span>
-                    </td>
-                    <td className="py-3">
-                      <div className="d-flex align-items-center text-muted">
-                        <span>{formatDate(request.createdAt)}</span>
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <div className="dropdown">
-                        <button
-                          className="btn btn-sm btn-outline-secondary border-0"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          disabled={updatingStatus === request._id}
-                        >
-                          {updatingStatus === request._id ? (
-                            <div className="spinner-border spinner-border-sm" role="status">
-                              <span className="visually-hidden">Loading...</span>
+                          <div>
+                            <div className="fw-semibold">
+                              User {request.userId ? request.userId.slice(-4) : "Unknown"}
                             </div>
-                          ) : (
-                            <BsThreeDotsVertical />
-                          )}
-                        </button>
-                        <ul className="dropdown-menu">
-                          <li>
-                            <button className="dropdown-item" onClick={() => viewRefundDetails(request._id)}>
-                              View Details
-                            </button>
-                          </li>
-                          {request.status !== "Approved" && (
+                            <small className="text-muted text-nowrap">
+                              ID: {request.userId || "N/A"}
+                            </small>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className="py-3">
+                        <span className="fw-medium">{request.transactionId || "N/A"}</span>
+                      </td>
+
+                      <td className="py-3">
+                        <div className="d-flex align-items-center">
+                          <span
+                            className="rounded-circle me-2"
+                            style={{
+                              width: "8px",
+                              height: "8px",
+                              backgroundColor:
+                                request.status === "Approved"
+                                  ? "#28a745"
+                                  : request.status === "Pending"
+                                    ? "#ffc107"
+                                    : "#dc3545",
+                            }}
+                          ></span>
+                          <span className="text-truncate" style={{ maxWidth: "200px" }}>
+                            {request.reason || "No reason provided"}
+                          </span>
+                        </div>
+                      </td>
+
+                      <td className="py-3">
+                        <span className={getStatusBadgeClass(request.status)}>
+                          {request.status || "Unknown"}
+                        </span>
+                      </td>
+
+                      <td className="py-3">
+                        <div className="d-flex align-items-center text-muted">
+                          <span>{formatDate(request.createdAt)}</span>
+                        </div>
+                      </td>
+
+                      <td className="py-3">
+                        {/* <div className="dropdown">
+                          <button
+                            className="btn btn-sm btn-outline-secondary border-0"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            disabled={updatingStatus === request._id}
+                          >
+                            {updatingStatus === request._id ? (
+                              <div className="spinner-border spinner-border-sm" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                              </div>
+                            ) : (
+                              <BsThreeDotsVertical />
+                            )}
+                          </button>
+
+                          <ul className="dropdown-menu">
                             <li>
                               <button
                                 className="dropdown-item"
-                                onClick={() => updateRefundStatus(request._id, "Approved")}
+                                onClick={() => viewRefundDetails(request._id)}
                               >
-                                Approve
+                                View Details
                               </button>
                             </li>
-                          )}
-                          {request.status !== "Rejected" && (
-                            <li>
-                              <button
-                                className="dropdown-item text-danger"
-                                onClick={() => updateRefundStatus(request._id, "Rejected")}
-                              >
-                                Reject
-                              </button>
-                            </li>
-                          )}
-                        </ul>
-                      </div>
+                            {request.status !== "Approved" && (
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() => updateRefundStatus(request._id, "Approved")}
+                                >
+                                  Approve
+                                </button>
+                              </li>
+                            )}
+                            {request.status !== "Rejected" && (
+                              <li>
+                                <button
+                                  className="dropdown-item text-danger"
+                                  onClick={() => updateRefundStatus(request._id, "Rejected")}
+                                >
+                                  Reject
+                                </button>
+                              </li>
+                            )}
+                          </ul>
+                        </div> */}
+                        <button
+                          className="btn btn-sm btn-outline-secondary border-0"
+                          onClick={() => viewRefundDetails(request._id)}
+                        >
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4 text-muted">
+                      No refund requests found.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

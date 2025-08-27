@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import AreYouSure from "@/components/notificationModalCont/AreYouSure";
-import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
+import SpinnerLoading from "@/components/SpinnerLoading";
 import { BsDot } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -105,8 +105,10 @@ const Discounts = () => {
       </div>
 
       {loading ? (
-        <div className="">
-          <SpinnerLoading />
+        <div className="page pt-4 px-0">
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+            <SpinnerLoading />
+          </div>
         </div>
       ) : error ? (
         <p className="mt-5 error_color">Error: {error}</p>
@@ -120,7 +122,7 @@ const Discounts = () => {
                 <Image
                   width={80}
                   height={80}
-                  src={coupon?.couponImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${coupon?.couponImage}` :"/images/default-avatar.png"}
+                  src={coupon?.couponImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${coupon?.couponImage}` : "/images/default-avatar.png"}
                   alt="category image"
                 />
                 <div className="d-flex flex-column">

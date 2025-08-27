@@ -6,12 +6,15 @@ function NotificationModal() {
   const [adminId, setAdminId] = useState(null);
   const router = useRouter();
   useEffect(() => {
-    const adminData = JSON.parse(sessionStorage.getItem("admin"));
-    if (adminData && adminData._id) {
-      setAdminId(adminData._id); // Use the actual admin ID from session storage
-    } else {
-      console.error("User not found or missing '_id' property");
-      router.push("/auth/login");
+    try {
+      const adminData = sessionStorage.getItem("adminId");
+      if (adminData) {
+        setAdminId(adminData);
+      } else {
+        router.push("/super-admin/auth/login");
+      }
+    } catch {
+      router.push("/super-admin/auth/login");
     }
   }, [router]);
 
@@ -31,7 +34,7 @@ function NotificationModal() {
           <div className="modal-body p-0">
             <div className="noti_modal_container_body">
               {status === "loading" && <p>Loading...</p>}
-              {status === "error" && <p>abcs</p>}
+              {status === "error" && <p>{errorMessage}</p>}
               {status === "success" && notifications.length === 0 && <p>No notifications found...</p>}
 
               {status === "success" &&

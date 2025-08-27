@@ -1,6 +1,6 @@
 "use client";
 import ProductCards from "@/components/ProductCards";
-import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
+import SpinnerLoading from "@/components/SpinnerLoading";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -282,7 +282,11 @@ const UserProfile = () => {
                 {activeTab === "product" && (
                   <div className="page product_tab">
                     {loading ? (
-                      <SpinnerLoading />
+                      <div className="page pt-4 px-0">
+                        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "150px" }}>
+                          <SpinnerLoading />
+                        </div>
+                      </div>
                     ) : error ? (
                       <p>{error}</p>
                     ) : products.length === 0 ? (
@@ -332,7 +336,11 @@ const UserProfile = () => {
                 {activeTab === "details" && (
                   <>
                     {success ? (
-                      <SpinnerLoading />
+                      <div className="page pt-4 px-0">
+                        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "150px" }}>
+                          <SpinnerLoading />
+                        </div>
+                      </div>
                     ) : (
                       <div>
                         <form key={refreshKey} className="position-relative mt-5 pt-0">

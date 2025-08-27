@@ -13,12 +13,15 @@ import {
   BsClock,
 } from "react-icons/bs"
 import SpinnerLoading from "@/components/SpinnerLoading"
+import RefundNow from "@/components/Modal/Refund" // adjust import path
 
 export default function RefundDetailPage({ params }) {
   const [refundData, setRefundData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [isRefundModalOpen, setIsRefundModalOpen] = useState(false)
+
   const router = useRouter()
   const { refundId } = params
 
@@ -31,7 +34,9 @@ export default function RefundDetailPage({ params }) {
   const fetchRefundDetails = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/getRefundRequestById?refundId=${refundId}`)
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/getRefundRequestById?refundId=${refundId}`
+      )
       const result = await response.json()
 
       if (result.success) {
@@ -49,16 +54,19 @@ export default function RefundDetailPage({ params }) {
   const updateRefundStatus = async (status) => {
     try {
       setUpdatingStatus(true)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/updateRefundRequest`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          refundId: refundId,
-          status: status,
-        }),
-      })
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/updateRefundRequest`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            refundId: refundId,
+            status: status,
+          }),
+        }
+      )
 
       const result = await response.json()
 
@@ -82,6 +90,10 @@ export default function RefundDetailPage({ params }) {
         return <BsXCircle className="text-danger" size={20} />
       case "pending":
         return <BsClock className="text-warning" size={20} />
+      case "refund":
+        return <BsCreditCard className="text-primary" size={20} />
+      case "completed":
+        return <BsCheckCircle className="text-primary" size={20} />
       default:
         return <BsClock className="text-secondary" size={20} />
     }
@@ -95,6 +107,10 @@ export default function RefundDetailPage({ params }) {
         return "badge bg-warning-subtle text-warning border border-warning-subtle"
       case "rejected":
         return "badge bg-danger-subtle text-danger border border-danger-subtle"
+      case "refund":
+        return "badge bg-primary-subtle text-primary border border-primary-subtle"
+      case "completed":
+        return "badge bg-secondary-subtle text-secondary border border-secondary-subtle"
       default:
         return "badge bg-secondary-subtle text-secondary border border-secondary-subtle"
     }
@@ -122,7 +138,10 @@ export default function RefundDetailPage({ params }) {
   if (loading) {
     return (
       <div className="page pt-4 px-0">
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ minHeight: "400px" }}
+        >
           <SpinnerLoading />
         </div>
       </div>
@@ -153,13 +172,18 @@ export default function RefundDetailPage({ params }) {
     <div className="page pt-4 px-0">
       {/* Header */}
       <div className="d-flex align-items-center mb-4">
-        <button className="btn btn-outline-secondary me-3 d-flex align-items-center" onClick={() => router.back()}>
+        <button
+          className="btn btn-outline-secondary me-3 d-flex align-items-center"
+          onClick={() => router.back()}
+        >
           <BsArrowLeft className="me-2" />
           Back
         </button>
         <div>
           <h2 className="mb-0 fw-bold">Refund Request Details</h2>
-          <p className="text-muted mb-0">Transaction ID: {refundData.transactionId || "N/A"}</p>
+          <p className="text-muted mb-0">
+            Transaction ID: {refundData.transactionId || "N/A"}
+          </p>
         </div>
       </div>
 
@@ -251,64 +275,64 @@ export default function RefundDetailPage({ params }) {
             </div>
             <div className="card-body">
               <div className="d-grid gap-2">
-                {refundData.status !== "Approved" && (
+                {/* Pending → Approve + Reject */}
+                {refundData.status === "Pending" && (
+                  <>
+                    <button
+                      className="btn btn-success"
+                      onClick={() => updateRefundStatus("Approved")}
+                      disabled={updatingStatus}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => updateRefundStatus("Rejected")}
+                      disabled={updatingStatus}
+                    >
+                      Reject
+                    </button>
+                  </>
+                )}
+
+                {/* Approved → Refund */}
+                {refundData.status === "Approved" && (
                   <button
-                    className="btn btn-success d-flex align-items-center justify-content-center"
-                    onClick={() => updateRefundStatus("Approved")}
+                    className="btn btn-primary"
+                    onClick={() => setIsRefundModalOpen(true)}
                     disabled={updatingStatus}
                   >
-                    {updatingStatus ? (
-                      <div className="spinner-border spinner-border-sm me-2" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    ) : (
-                      <BsCheckCircle className="me-2" />
-                    )}
-                    Approve Refund
+                    Refund
                   </button>
                 )}
-                {refundData.status !== "Rejected" && (
+
+                {/* Refund → Completed */}
+                {refundData.status === "Refund" && (
                   <button
-                    className="btn btn-danger d-flex align-items-center justify-content-center"
-                    onClick={() => updateRefundStatus("Rejected")}
+                    className="btn btn-success"
+                    onClick={() => updateRefundStatus("Completed")}
                     disabled={updatingStatus}
                   >
-                    {updatingStatus ? (
-                      <div className="spinner-border spinner-border-sm me-2" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    ) : (
-                      <BsXCircle className="me-2" />
-                    )}
-                    Reject Refund
+                    Completed
                   </button>
                 )}
-                {refundData.status !== "Pending" && (
-                  <button
-                    className="btn btn-warning d-flex align-items-center justify-content-center"
-                    onClick={() => updateRefundStatus("Pending")}
-                    disabled={updatingStatus}
-                  >
-                    {updatingStatus ? (
-                      <div className="spinner-border spinner-border-sm me-2" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    ) : (
-                      <BsClock className="me-2" />
-                    )}
-                    Mark as Pending
-                  </button>
+
+                {/* Completed → No actions */}
+                {refundData.status === "Completed" && (
+                  <div className="alert alert-info text-center mb-0">
+                    Refund Completed
+                  </div>
                 )}
               </div>
 
               <hr className="my-4" />
-
               <div className="text-center">
-                <small className="text-muted">Last updated: {formatDate(refundData.updatedAt)}</small>
+                <small className="text-muted">
+                  Last updated: {formatDate(refundData.updatedAt)}
+                </small>
               </div>
             </div>
           </div>
-
           {/* Status Timeline Card */}
           <div className="card border-0 shadow-sm mt-4">
             <div className="card-header bg-white border-0">
@@ -339,6 +363,17 @@ export default function RefundDetailPage({ params }) {
           </div>
         </div>
       </div>
+
+      {/* Refund Modal */}
+      <RefundNow
+        isOpen={isRefundModalOpen}
+        onClose={() => setIsRefundModalOpen(false)}
+        btntitle="Refund Now"
+        selectedRefund={refundData}
+        onRefundSuccess={() => updateRefundStatus("Refund")}
+        username={process.env.NEXT_PUBLIC_REFUND_USER}
+        password={process.env.NEXT_PUBLIC_REFUND_PASS}
+      />
     </div>
   )
 }
