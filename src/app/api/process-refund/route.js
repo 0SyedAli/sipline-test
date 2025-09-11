@@ -35,8 +35,8 @@ export async function POST(request) {
 
     const responseText = await response.text();
     
-    console.log("Payment gateway response status:", response.status);
-    console.log("Payment gateway response preview:", responseText.substring(0, 200));
+    // console.log("Payment gateway response status:", response.status);
+    // console.log("Payment gateway response preview:", responseText.substring(0, 200));
 
     let responseData;
     try {

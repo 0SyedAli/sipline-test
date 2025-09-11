@@ -1892,7 +1892,6 @@ input[type=number] {
   animation: spin 2s linear infinite;
 }
 
-
 .auth_otp div {
   gap: 15px;
   justify-content: center;

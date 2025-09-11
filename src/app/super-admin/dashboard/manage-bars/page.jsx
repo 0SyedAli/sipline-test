@@ -201,7 +201,7 @@ export default function ManageBarPage() {
                           <button
                             className="btn btn-outline-secondary btn-sm text-nowrap"
                             onClick={() => {
-                              console.log(`View shop details for: ${shop._id}`)
+                              // console.log(`View shop details for: ${shop._id}`)
                               // You can implement navigation to shop details page here
                               router.push(`manage-bars/bar/${shop._id}`)
                             }}

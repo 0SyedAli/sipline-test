@@ -5,7 +5,7 @@
 }
 
 .auth_image {
-  background: url("../../public/images/auth_bg.jpg") no-repeat center center;
+  background: url("../../public/images/auth-bg.png") no-repeat center center;
   background-size: cover;
   grid-column: 1 / 2;
 }

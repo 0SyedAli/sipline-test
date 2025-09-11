@@ -219,7 +219,7 @@ const UserProfile = () => {
       console.error("Error fetching shop data:", error);
     }
   };
-  console.log("shopData", shopData);
+  // console.log("shopData", shopData);
 
   return (
     <div className="page">
@@ -232,7 +232,7 @@ const UserProfile = () => {
             </div> */}
           </div>
           <div className="user_profile">
-            {console.log("image:", process.env.NEXT_PUBLIC_IMAGE_URL + shopData?.shopImage)}
+            {/* {console.log("image:", process.env.NEXT_PUBLIC_IMAGE_URL + shopData?.shopImage)} */}
             <Image width={126} height={126} src={shopData?.shopImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${shopData?.shopImage}` : customer} alt="" />
             {/* <div className="up_upload_btn">
               <FaPlus />
@@ -380,7 +380,7 @@ const UserProfile = () => {
                                 <input
                                   type="time"
                                   className="form-control"
-                                  value={workStartTime.replace(":00", "")} // show only HH:MM in input
+                                  value={workStartTime} // show only HH:MM in input
                                   onChange={handleStartTimeChange}
                                 />
                               </div>
@@ -389,7 +389,7 @@ const UserProfile = () => {
                                 <input
                                   type="time"
                                   className="form-control"
-                                  value={workEndTime.replace(":00", "")} // show only HH:MM in input
+                                  value={workEndTime} // show only HH:MM in input
                                   onChange={handleEndTimeChange}
                                 />
                               </div>

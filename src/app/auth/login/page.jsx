@@ -99,7 +99,7 @@ export default function LoginPage() {
       // old logic for handling
     } catch (error) {
       // Handle validation or request errors
-      console.log(error);
+      // console.log(error);
 
       setError(error?.response?.data?.msg || error?.message || "Login failed");
       setSuccess(false);

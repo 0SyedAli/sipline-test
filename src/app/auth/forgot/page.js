@@ -87,7 +87,7 @@ export default function Forget() {
               onChange={(e) => setEmail(e.target.value)}
             />
             {error && <p style={{ color: "red" }}>{error}</p>}
-            <AuthBtn title={isLoading ? "Submitting..." : "Login"} type="submit" disabled={isLoading} />
+            <AuthBtn title={isLoading ? "Submitting..." : "Forgoet"} type="submit" disabled={isLoading} />
           </form>
         </>
       )}

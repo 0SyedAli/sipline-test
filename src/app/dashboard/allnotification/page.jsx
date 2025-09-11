@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useNotifications } from "@/hooks/useNotifications";
+import SpinnerLoading from "@/components/SpinnerLoading";
 
 const AllNotification = () => {
   const [adminId, setAdminId] = useState(null);
@@ -40,7 +41,14 @@ const AllNotification = () => {
     return `${seconds} seconds ago`;
   };
 
-  if (status === "loading") return <p>Loading notifications...</p>;
+  if (status === "loading") return (
+    <div className="page pt-4 px-0">
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "400px" }}>
+        <SpinnerLoading />
+      </div>
+    </div>
+  )
+    ;
   if (status === "error") return (
     <div>
       <p className="text-danger">{errorMessage}</p>

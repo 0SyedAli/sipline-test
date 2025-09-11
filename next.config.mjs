@@ -5,16 +5,16 @@ const nextConfig = {
     domains: ["appsdemo.pro"],
 
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/auth/login',
-        permanent: false,
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/auth/login',
+  //       permanent: false,
         
-      },
-    ];
-  },
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

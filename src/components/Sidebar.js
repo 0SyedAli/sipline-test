@@ -20,7 +20,7 @@ const SideBar = () => {
       setAdminData(adminData);
     } else {
       console.error("User not found or missing '_id' property");
-      // router.push("/auth/login"); 2
+      router.push("/auth/login"); 
     }
   }, [router]);
 

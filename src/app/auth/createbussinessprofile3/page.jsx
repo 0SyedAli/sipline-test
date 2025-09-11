@@ -169,7 +169,7 @@ export default function CreateBusinessProfilePage3() {
                   <input
                     type="time"
                     className="form-control"
-                    value={workStartTime.replace(":00", "")} // show only HH:MM in input
+                    value={workStartTime} // show only HH:MM in input
                     onChange={handleStartTimeChange}
                   />
                 </div>
@@ -178,7 +178,7 @@ export default function CreateBusinessProfilePage3() {
                   <input
                     type="time"
                     className="form-control"
-                    value={workEndTime.replace(":00", "")} // show only HH:MM in input
+                    value={workEndTime} // show only HH:MM in input
                     onChange={handleEndTimeChange}
                   />
                 </div>

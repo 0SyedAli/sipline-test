@@ -91,7 +91,7 @@ const AllReviews = ({ limit = null }) => {
     return (
         <div className="page product_tab">
             {loading ? (
-                <SpinnerLoading />
+                <SpinnerLoading borderWidth="mx-auto" />
             ) : (
                 <div>
                     {/* Rating Section */}

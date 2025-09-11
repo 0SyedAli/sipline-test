@@ -114,7 +114,7 @@ const UserProfile = () => {
       console.error(error);
     }
   };
-console.log(selectedCategories);
+// console.log(selectedCategories);
 
   const handleUpdateShop = async (e) => {
     e.preventDefault();
@@ -172,7 +172,7 @@ console.log(selectedCategories);
       setIsLoading(false);
     }
   };
-  console.log("abc:", `${formData.shopImage}`);
+  // console.log("abc:", `${formData.shopImage}`);
 
   return (
     <div className="page">
@@ -180,10 +180,10 @@ console.log(selectedCategories);
         <div className="user_banner mt-5">
           <div className="up_upload">
             <div className="up_cover">
-              <img src={userCover} alt="Cover" />
-              <div className="up_upload_btn">
+              <Image width={1461} height={300} src={userCover} alt="Cover" />
+              {/* <div className="up_upload_btn">
                 <FaPlus />
-              </div>
+              </div> */}
             </div>
             <div className="user_profile">
               <UploadImage
