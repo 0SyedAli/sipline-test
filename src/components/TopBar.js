@@ -24,7 +24,7 @@ const TopBar = () => {
       <div className="topbar_container">
         <div>
           <h2 className="mb-1">
-            Welcome Back, Travis
+            Welcome
             <span>
               <Image
                 src="/images/greeting.png"

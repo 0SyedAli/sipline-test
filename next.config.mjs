@@ -2,7 +2,7 @@
 const nextConfig = {
   // Redirect to login page by default
   images: {
-    domains: ["appsdemo.pro"],
+    domains: ["thesipline.com"],
 
   },
   // async redirects() {

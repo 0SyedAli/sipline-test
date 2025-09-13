@@ -23,7 +23,7 @@ const TopBar2 = () => {
       <div className="topbar_container">
         <div>
           <h2 className="mb-1">
-            Welcome Back,
+            Welcome
             <span>
               <Image
                 src="/images/greeting.png"

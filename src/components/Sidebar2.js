@@ -29,6 +29,7 @@ const SideBar2 = () => {
     { href: "/super-admin/dashboard/manage-orders", icon: "/images/li2.png", text: "Manage Orders" },
     { href: "/super-admin/dashboard/manage-bars", icon: "/images/li3.png", text: "Manage Bars" },
     { href: "/super-admin/dashboard/manage-refunds", icon: "/images/li4.png", text: "Manage Refunds" },
+    { href: "/super-admin/dashboard/manage-delete-accounts", icon: "/images/li4.png", text: "Manage Delete Accounts" },
     { href: "/super-admin/dashboard/features", icon: "/images/calendar-tick.png", text: "Features Ads" },
     { href: "/super-admin/dashboard/privacy-policy", icon: "/images/li7.png", text: "Privacy Policy" },
     { href: "/super-admin/dashboard/terms-&-condition", icon: "/images/li8.png", text: "Terms & Conditions" },

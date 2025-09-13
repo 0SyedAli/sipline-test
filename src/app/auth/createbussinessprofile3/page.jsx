@@ -92,8 +92,8 @@ export default function CreateBusinessProfilePage3() {
     apiPayload.append("adminId", adminId);
     apiPayload.append("shopId", shopId);
     apiPayload.append("workingDays", JSON.stringify(formattedWorkingDays));
-    apiPayload.append("longitude", 67.001137);
-    apiPayload.append("latitude", 24.860735);
+    apiPayload.append("latitude", 40.672552);
+    apiPayload.append("longitude", -73.946558);
     apiPayload.append("address", "static address");
 
     try {

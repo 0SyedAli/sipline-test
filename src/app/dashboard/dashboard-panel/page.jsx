@@ -128,7 +128,7 @@ const DashboardPanel = () => {
         {/* Charts */}
         <div className="my-4 d-flex align-items-end flex-column flex-lg-row">
           <CardLineChart />
-          <CardLineChart2 />
+          {/* <CardLineChart2 /> */}
         </div>
 
         {/* Orders Section */}
