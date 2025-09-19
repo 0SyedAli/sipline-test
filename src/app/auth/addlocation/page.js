@@ -1,104 +1,88 @@
 "use client";
 import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
-import InputField from "@/components/Form/InputField";
-import MapDummy from "@/components/MapDummy";
+import Map from "@/components/Map";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import * as yup from "yup"; // Ensure proper import
+import * as yup from "yup";
 
-
+// ✅ Validation schema matches backend keys
 const locationValidation = yup.object().shape({
-  locationName: yup
-    .string()
-    .required("Location is required")
-    .min(2, "Location must be at least 2 characters long"),
+  locationName: yup.string().required("Location is required").min(2),
+  latitude: yup.number().required("Latitude is required"),
+  longitude: yup.number().required("Longitude is required"),
 });
 
 export default function AddLocation() {
   const [addLocation, setAddLocation] = useState(false);
-  const [location, setLocation] = useState("");
+  const [locationData, setLocationData] = useState({
+    locationName: "",
+    latitude: null,
+    longitude: null,
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
-
-  const [adminId, setAdminId] = useState(""); // Loading state
+  const [adminId, setAdminId] = useState("");
 
   useEffect(() => {
     const adminData = sessionStorage.getItem("admin");
-
     if (adminData) {
       try {
-        const AdminData = JSON.parse(adminData);
-        setAdminId(AdminData._id);
-      } catch (error) {
-        console.error("Error parsing admin data from sessionStorage:", error);
+        setAdminId(JSON.parse(adminData)._id);
+      } catch {
+        router.replace("/auth/login");
       }
     } else {
-      router.replace("/auth/login"); // Redirect if no admin data
+      router.replace("/auth/login");
     }
-  }, []);
+  }, [router]);
 
   const handleNext = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    const requestData = {
-      adminId: adminId,
-      locationName: location,
-    };
+    const requestData = { adminId, ...locationData };
 
     try {
-      await locationValidation.validate(requestData, { abortEarly: false }); // Validate data
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateAdmin`, requestData);
-
+      await locationValidation.validate(requestData, { abortEarly: false });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateAdmin`,
+        requestData
+      );
       if (response.status === 200) {
-        setSuccess(true);
-        router.push("locationdetails"); // Move to next page
+        router.push("locationdetails");
       } else {
         setError("Something went wrong. Please try again.");
       }
-    } catch (error) {
-      if (error.name === "ValidationError") {
-        // If validation fails, set error messages
-        setError(error.errors.join(", "));
+    } catch (err) {
+      if (err.name === "ValidationError") {
+        setError(err.errors.join(", "));
       } else {
-        setError(error.response?.data?.message || "An error occurred. Please try again.");
+        setError(err.response?.data?.message || "An error occurred");
       }
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <form>
       {!addLocation ? (
-        <button
-          type="button"
-          className="locationBtn"
-          onClick={() => {
-            setAddLocation(true);
-          }}
-        >
-          <span>
-            <FaPlus />
-          </span>
-          Add Location
-        </button>
+        <button type="button" className="locationBtn" onClick={() => { setAddLocation(true); }} > <span> <FaPlus /> </span> Add Location </button>
       ) : (
         <>
-          <InputField
-            placeholder="Search"
-            classInput="classInput"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-          />
-          <MapDummy />
-          
-          <div className="mt-4">
-             {error && <p style={{ color: "red" }}>{error}</p>}
-            <AuthBtn title="Confirm" type="button" disabled={isLoading} onClick={handleNext} />
+          <Map setLocationData={setLocationData} />
+          <div className="mt-3">
+            {error && <div className="text-danger mb-2">{error}</div>}
+            <AuthBtn
+              title={isLoading ? "Saving..." : "Confirm"}
+              type="button"
+              disabled={isLoading}
+              onClick={handleNext}
+            />
           </div>
         </>
       )}

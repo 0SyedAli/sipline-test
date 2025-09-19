@@ -67,8 +67,7 @@ const DeleteAccount = () => {
 
   return (
     <>
-         <ToastContainer />
-
+      <ToastContainer />
 
       <nav className="navbar">
         <div className="container">

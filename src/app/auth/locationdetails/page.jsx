@@ -47,8 +47,8 @@ export default function LocationDetail() {
 
     const apiPayload = new FormData();
     apiPayload.append("adminId", adminId);
-    apiPayload.append("latitude", 40.672552);
-    apiPayload.append("longitude", -73.946558);
+    // apiPayload.append("latitude", 40.672552);
+    // apiPayload.append("longitude", -73.946558);
     apiPayload.append("postalCode", postalCode);
     apiPayload.append("country", country);
     apiPayload.append("state", state);

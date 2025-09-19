@@ -122,6 +122,10 @@ a {
   text-decoration: none;
 }
 
+.google_search_input_set>div:first-child {
+  width: 100%;
+}
+
 .spinner_loader {
   display: flex;
   align-items: center;
