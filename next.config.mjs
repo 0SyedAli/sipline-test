@@ -5,6 +5,16 @@ const nextConfig = {
     domains: ["thesipline.com"],
 
   },
+
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/auth/login",
+        permanent: false, // false = temporary redirect (307)
+      },
+    ];
+  },
 };
 
 export default nextConfig;
