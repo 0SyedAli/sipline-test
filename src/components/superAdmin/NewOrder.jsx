@@ -14,32 +14,65 @@ export default function NewOrder() {
     const router = useRouter();
     const [error, setError] = useState(null)
 
+    // const fetchNewOrders = async () => {
+    //     try {
+    //         setLoading(true)
+    //         const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/getAllOrders`)
+
+    //         if (!response.ok) {
+    //             throw new Error("Failed to fetch orders")
+    //         }
+
+    //         const result = await response.json()
+
+    //         if (result.success) {
+    //             // Filter for new/pending orders only
+    //             const newOrders = result.data.filter(
+    //                 (order) => order.status.toLowerCase() === "pending" || order.status.toLowerCase() === "new",
+    //             )
+    //             setOrders(newOrders)
+    //         } else {
+    //             throw new Error(result.msg || "Failed to fetch orders")
+    //         }
+    //     } catch (err) {
+    //         setError(err instanceof Error ? err.message : "An error occurred")
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
     const fetchNewOrders = async () => {
         try {
-            setLoading(true)
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/getAllOrders`)
+            setLoading(true);
+            setError(null);
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/getAllOrders`);
 
             if (!response.ok) {
-                throw new Error("Failed to fetch orders")
+                throw new Error("Failed to fetch orders");
             }
 
-            const result = await response.json()
+            const result = await response.json();
 
             if (result.success) {
-                // Filter for new/pending orders only
+                // Filter for new/pending orders
                 const newOrders = result.data.filter(
-                    (order) => order.status.toLowerCase() === "pending" || order.status.toLowerCase() === "new",
-                )
-                setOrders(newOrders)
+                    (order) => order.status.toLowerCase() === "pending" || order.status.toLowerCase() === "new"
+                );
+                setOrders(newOrders);
+            } else if (result.msg === "No Orders Found!") {
+                // Show empty state instead of error
+                setOrders([]);
             } else {
-                throw new Error(result.msg || "Failed to fetch orders")
+                throw new Error(result.msg || "Failed to fetch orders");
             }
         } catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred")
+            setError(err instanceof Error ? err.message : "An error occurred");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
+
+
 
     useEffect(() => {
         fetchNewOrders()
@@ -77,7 +110,9 @@ export default function NewOrder() {
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
     const currentOrders = filteredOrders.slice(startIndex, endIndex)
-
+    const viewOrderDetails = (order_Id) => {
+        router.push(`/super-admin/dashboard/manage-orders/order/${order_Id}`)
+    }
     if (loading) {
         return (
             <div className="page pt-4 px-0">
@@ -115,22 +150,28 @@ export default function NewOrder() {
                         {orders.length} new order{orders.length !== 1 ? "s" : ""} awaiting your attention
                     </p>
                 </div>
-                <div className="d-flex gap-2 align-items-center flex-wrap">
-                    <div className="position-relative">
-                        <BsSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-                        <input
-                            type="text"
-                            className="form-control ps-5 w-100"
-                            placeholder="Search by customer, order ID, or status..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            style={{ width: "300px" }}
-                        />
+                {orders?.length > 0 && (
+                    <div className="d-flex gap-2 align-items-center flex-wrap">
+                        <button className="btn btn-outline-secondary" onClick={() => router.push("/super-admin/dashboard/manage-orders")} disabled={loading}>
+                            View all orders
+                        </button>
+                        <div className="position-relative dash_searc" style={{ width: "400px" }}>
+                            <BsSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
+                            <input
+                                type="text"
+                                className="form-control ps-5 w-100"
+                                placeholder="Search by customer, order ID, or status..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ width: "300px" }}
+                            />
+                        </div>
+                        <button className="btn btn-secondary" onClick={fetchNewOrders} disabled={loading}>
+                            Refresh
+                        </button>
+
                     </div>
-                    <button className="btn btn-outline-primary" onClick={fetchNewOrders} disabled={loading}>
-                        Refresh
-                    </button>
-                </div>
+                )}
             </div>
 
             {/* New Orders Alert */}
@@ -155,9 +196,9 @@ export default function NewOrder() {
                 <div className="card-body p-0">
                     {orders.length === 0 ? (
                         <div className="text-center py-5">
-                            <BsCheck className="display-1 text-success mb-3" />
+                            {/* <BsCheck className="display-1 text-success mb-3" /> */}
                             <h4>No New Orders</h4>
-                            <p className="text-muted">All orders have been processed. Great job!</p>
+                            {/* <p className="text-muted">All orders have been processed. Great job!</p> */}
                         </div>
                     ) : (
                         <>
@@ -169,6 +210,7 @@ export default function NewOrder() {
                                             <th scope="col">Order ID</th>
                                             <th scope="col">Date</th>
                                             <th scope="col">Products</th>
+                                            <th scope="col">Bar Name</th>
                                             <th scope="col">Total</th>
                                             <th scope="col">Status</th>
                                             <th scope="col">Actions</th>
@@ -201,7 +243,7 @@ export default function NewOrder() {
                                                     <div>
                                                         <strong>{order.product.length}</strong> item{order.product.length !== 1 ? "s" : ""}
                                                     </div>
-                                                    <small className="text-muted">
+                                                    <small className="text-muted  text-nowrap">
                                                         {order.product
                                                             .map((p) => p.productId?.name)
                                                             .filter(Boolean)
@@ -215,7 +257,8 @@ export default function NewOrder() {
                                                             : ""}
                                                     </small>
                                                 </td>
-                                                <td className="fw-bold text-success">₦{order.grandTotal.toFixed(2)}</td>
+                                                <td className="fw-bold">{order?.shopId?.barName}</td>
+                                                <td className="fw-bold text-success">${order.grandTotal.toFixed(2)}</td>
                                                 <td>
                                                     <span className="badge bg-warning text-dark">{order.status}</span>
                                                 </td>
@@ -223,9 +266,10 @@ export default function NewOrder() {
                                                     <button
                                                         className="btn btn-outline-secondary btn-sm text-nowrap"
                                                         type="button"
-                                                        onClick={() => router.push("/super-admin/dashboard/manage-orders")}
+                                                        // onClick={() => router.push("/super-admin/dashboard/manage-orders")}
+                                                        onClick={() => viewOrderDetails(order._id)}
                                                     >
-                                                        View More
+                                                        View Details
                                                     </button>
                                                     {/* <div className="btn-group" role="group">
                                                         

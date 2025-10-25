@@ -2,6 +2,7 @@
   "name": "sipline",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://159.198.36.33:5000",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

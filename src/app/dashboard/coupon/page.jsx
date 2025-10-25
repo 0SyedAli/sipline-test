@@ -18,6 +18,7 @@ const Discount = () => {
   const router = useRouter();
   const [couponId, setCouponId] = useState("");
   const [adminId, setAdminId] = useState("");
+  const [barName, setBarName] = useState("");
   const [imageFile, setImageFile] = useState(null); // Only store filename
   const [formData, setFormData] = useState({
     couponCode: "",
@@ -28,7 +29,7 @@ const Discount = () => {
     startDate: "",
     endDate: "",
     status: "Active", // Default status
-    barName: "",
+    // barName: "",
     image: null
   });
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,8 @@ const Discount = () => {
   useEffect(() => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (adminData?._id) {
-      setAdminId("681120f22f4715831181a9c4");
+      setAdminId(adminData?._id);
+      setBarName(adminData?.shopId?.barName);
     } else {
       console.error("Admin not found");
       // router.push("/auth/add-services");
@@ -75,7 +77,7 @@ const Discount = () => {
           startDate: formatDateForInput(coupon.startDate),
           endDate: formatDateForInput(coupon.endDate),
           status: coupon.status,
-          barName: coupon.barName || "",
+          barName: barName,
           couponImage: coupon.couponImage || "",
         });
 
@@ -163,6 +165,7 @@ const Discount = () => {
       // Create the payload object (not FormData)
       const payload = {
         couponBy: adminId,
+        barName: barName,
         couponCode: formData.couponCode,
         discountType: formData.discountType,
         discountPercent: parseFloat(formData.discountPercent),
@@ -171,7 +174,8 @@ const Discount = () => {
         startDate: formatDateForAPI(formData.startDate),
         endDate: formatDateForAPI(formData.endDate),
         status: formData.status,
-        ...(formData.barName && { barName: formData.barName }),
+
+        // ...(formData.barName && { barName: formData.barName }),
         ...(couponId && { couponId }), // Include couponId for updates
       };
 
@@ -249,12 +253,14 @@ const Discount = () => {
           <div className="row">
             <div className="col-12 col-md-10 col-lg-8 col-xxl-6">
               <div className="row">
-                <div className="col-12 coupon_img">
-                  <UploadImage
-                    onFileChange={handleFileChange}
-                    existingImage={couponId ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${formData.couponImage}` : null}
-                  />
-                </div>
+                {couponId ? "" : (
+                  <div className="col-12 coupon_img">
+                    <UploadImage
+                      onFileChange={handleFileChange}
+                      existingImage={couponId ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${formData.couponImage}` : null}
+                    />
+                  </div>
+                )}
                 <div className="col-6">
                   <label htmlFor="couponCode">Coupon Code</label>
                   <InputField
@@ -320,13 +326,14 @@ const Discount = () => {
                   />
                 </div>
                 <div className="col-6">
-                  <label htmlFor="barName">Bar Name (Optional)</label>
+                  <label htmlFor="barName">Bar Name</label>
                   <InputField
                     type="text"
                     name="barName"
-                    value={formData.barName}
-                    onChange={handleChange}
-                    placeholder="The Royal Club"
+                    value={barName}
+                    // onChange={handleChange}
+                    // placeholder="The Royal Club"
+                    disabled={true}
                     id="barName"
                     classInput="classInput"
                   />

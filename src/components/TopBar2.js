@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { triggerRefresh } from "src/lib/redux/store/slices/refreshSlice";
 import { useState } from "react";
 import { RiMenu3Line } from "react-icons/ri";
+import AddBusCategory from "./Modal/AddBusCategory";
 
 const TopBar2 = () => {
   const dispatch = useDispatch();
@@ -35,19 +36,27 @@ const TopBar2 = () => {
           </h2>
           <p>Are you thirsty? Would you like something?</p>
         </div>
-        <button
-          type="button"
-          className="noti_btn"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
+        <div
+          className={`top_menu d-flex align-items-center gap-3 ${menuOpen ? "open" : ""
+            }`}
         >
-          <Image
-            src="/images/notification.png"
-            alt="notification icon"
-            width={25}
-            height={25}
-          />
-        </button>
+                   <div onClick={onOpen} className="btn btntheme3">
+              Add Category
+            </div>
+          {/* <button
+            type="button"
+            className="noti_btn"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
+            <Image
+              src="/images/notification.png"
+              alt="notification icon"
+              width={25}
+              height={25}
+            />
+          </button> */}
+        </div>
         {/* <div className="menu_wrapper">
           <button
             className="menu_toggle"
@@ -76,13 +85,13 @@ const TopBar2 = () => {
           </div>
         </div> */}
       </div>
-      <AddCategory
+      <AddBusCategory
         btntitle="Add now"
         isOpen={isOpen}
         onClose={onClose}
         onSuccess={() => dispatch(triggerRefresh())}
       />
-      <NotificationModal />
+      {/* <NotificationModal /> */}
     </>
   );
 };

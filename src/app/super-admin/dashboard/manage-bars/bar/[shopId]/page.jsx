@@ -5,13 +5,21 @@ import { useState, useEffect } from "react"
 import { BsStarFill, BsStarHalf, BsStar, BsClock, BsGeoAlt, BsInfoCircle } from "react-icons/bs"
 import "../../../../../../styles/shop.css"
 import SpinnerLoading from "@/components/SpinnerLoading"
-const defaultShopImage = "/placeholder.svg?height=400&width=600"
+import { useRouter } from "next/navigation"
+const defaultShopImage = "/images/defaultBar.jpg"
 
 const BarDetails = ({ params }) => {
     const shopId = params.shopId
     const [shop, setShop] = useState(null)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(true)
+    const router = useRouter();
+    // const imageUrl = shop.shopImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${shop.shopImage}` : defaultShopImage
+    const [imageUrl, setImageUrl] = useState(
+        shop?.shopImage
+            ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${shop?.shopImage}`
+            : defaultShopImage
+    );
 
     useEffect(() => {
         const getShopDetails = async () => {
@@ -105,7 +113,6 @@ const BarDetails = ({ params }) => {
         )
     }
 
-    const imageUrl = shop.shopImage ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${shop.shopImage}` : defaultShopImage
 
     return (
         <div className="page px-0">
@@ -117,15 +124,12 @@ const BarDetails = ({ params }) => {
                         <div className="col-lg-8">
                             <div className="bar_detail_left">
                                 <Image
-                                    src={imageUrl || "/placeholder.svg"}
+                                    src={imageUrl}
                                     alt={shop.barName}
-                                    width={800}
-                                    height={500}
-                                    className="w-100 object-fit-cover"
-                                    style={{ height: "500px" }}
-                                    onError={(e) => {
-                                        e.target.src = defaultShopImage
-                                    }}
+                                    width={1200}
+                                    height={700}
+                                    className="w-100 object-fit-cover h-100"
+                                    onError={() => setImageUrl(defaultShopImage)}
                                 />
                                 <div className="position-absolute bottom-0 start-0 bg-dark bg-gradient-dark p-4">
                                     <div className="text-white">
@@ -173,10 +177,15 @@ const BarDetails = ({ params }) => {
                     <div className="col-lg-8">
                         <div className="card border-0 shadow-sm rounded-4 mb-4">
                             <div className="card-body p-4">
-                                <h3 className="card-title text-primary mb-4 d-flex align-items-center">
-                                    <BsInfoCircle className="me-2" />
-                                    Bar Information
-                                </h3>
+                                <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+                                    <h3 className="card-title text-primary d-flex align-items-center">
+                                        <BsInfoCircle className="me-2" />
+                                        Bar Information
+                                    </h3>
+                                    <button className="btn btn-outline-secondary" onClick={() => router.push(`/super-admin/dashboard/manage-bars/orders/${shop?.adminId?._id}`)} disabled={loading}>
+                                        View All Orders for This Bar
+                                    </button>
+                                </div>
                                 <div className="row g-4">
                                     <div className="col-md-6">
                                         <div className="info-item">

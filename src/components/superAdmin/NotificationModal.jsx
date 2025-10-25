@@ -20,7 +20,22 @@ function NotificationModal() {
 
 
   const { notifications, status, errorMessage } = useNotifications(adminId);
-
+const formatTimeAgo = (date) => {
+    if (!date) return "Unknown time";
+    const seconds = Math.floor((Date.now() - new Date(date)) / 1000);
+    const units = [
+      { label: "year", value: 31536000 },
+      { label: "month", value: 2592000 },
+      { label: "day", value: 86400 },
+      { label: "hour", value: 3600 },
+      { label: "minute", value: 60 },
+    ];
+    for (const unit of units) {
+      const interval = Math.floor(seconds / unit.value);
+      if (interval >= 1) return `${interval} ${unit.label}${interval > 1 ? "s" : ""} ago`;
+    }
+    return `${seconds} seconds ago`;
+  };
   return (
     <div
       className="modal fade"
@@ -44,9 +59,9 @@ function NotificationModal() {
                       <img src="/images/ticket.png" alt="ticket" />
                     </div>
                     <div>
-                      <h5>{n.title}</h5>
-                      <p dangerouslySetInnerHTML={{ __html: n.body }}></p>
-                      <p className="pt-4">
+                      <h5>#{n.orderId.slice(0, 5)}</h5>
+                      <p dangerouslySetInnerHTML={{ __html: n.message }}></p>
+                      <p className="pt-2">
                         <span>{formatTimeAgo(n.createdAt)}</span>
                       </p>
                     </div>

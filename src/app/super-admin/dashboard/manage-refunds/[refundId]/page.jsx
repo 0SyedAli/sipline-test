@@ -255,7 +255,7 @@ export default function RefundDetailPage({ params }) {
                     </div>
                     <div>
                       <h6 className="mb-1">Refund Amount</h6>
-                      <p className="text-muted mb-0">{formatCurrency(refundData.amount)}</p>
+                      <p className="text-muted mb-0">{formatCurrency(refundData?.orderId?.grandTotal)}</p>
                     </div>
                   </div>
                 </div>
@@ -378,6 +378,7 @@ export default function RefundDetailPage({ params }) {
       <RefundNow
         isOpen={isRefundModalOpen}
         onClose={() => setIsRefundModalOpen(false)}
+        refundAmount={refundData?.orderId?.grandTotal}
         btntitle="Refund Now"
         selectedRefund={refundData}
         onRefundSuccess={handleRefundSuccess} // Use the updated handler

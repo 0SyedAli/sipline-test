@@ -39,7 +39,7 @@ export default function CreateBusinessProfilePage3() {
       router.replace("/auth/login"); // Redirect if no admin data
     }
 
-  }, []);
+  }, [router]);
 
   // Handle day change
   const handleDayChange = (e) => {
@@ -92,9 +92,9 @@ export default function CreateBusinessProfilePage3() {
     apiPayload.append("adminId", adminId);
     apiPayload.append("shopId", shopId);
     apiPayload.append("workingDays", JSON.stringify(formattedWorkingDays));
-    apiPayload.append("latitude", 40.672552);
-    apiPayload.append("longitude", -73.946558);
-    apiPayload.append("address", "static address");
+    // apiPayload.append("latitude", 40.672552);
+    // apiPayload.append("longitude", -73.946558);
+    // apiPayload.append("address", "static address");
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}admin/updateShop`, {
@@ -144,6 +144,7 @@ export default function CreateBusinessProfilePage3() {
                     "Tuesday",
                     "Wednesday",
                     "Thursday",
+                    "Friday",
                     "Saturday",
                     "Sunday",
                   ].map((day) => (

@@ -20,7 +20,7 @@ const AllReviews = ({ limit = null }) => {
         const adminData = JSON.parse(sessionStorage.getItem("admin"));
         if (adminData?._id) {
             setAdminId(adminData._id);
-            setShopId(adminData.shopId);
+            setShopId(adminData?.shopId?._id);
         } else {
             // router.push("/auth/login"); 2
         }

@@ -2,6 +2,7 @@
 import NewOrderProductCard from "@/components/NewOrderProductCard";
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
 import Spinner2 from "@/components/Spinner2";
+import CustomerImage2 from "@/components/superAdmin/CustomerImage2";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -202,18 +203,7 @@ const Order = ({ params }) => {
               <p>Customer</p>
               <div className="d-flex align-items-center justify-content-between">
                 <div className="cs_user d-flex align-items-center gap-2">
-                  <Image
-                    src={customer?.profile_image
-                      ? `${process.env.NEXT_PUBLIC_IMAGE_URL}/${customer.profile_image}`
-                      : defaultUserImage}
-                    alt="Customer"
-                    width={50}
-                    height={50}
-                    className="rounded-circle"
-                    onError={(e) => {
-                      e.target.src = defaultUserImage;
-                    }}
-                  />
+                  <CustomerImage2 customer={customer} />
                   <h3 className="m-0">
                     {customer?.full_name || "Guest Customer"}
                   </h3>

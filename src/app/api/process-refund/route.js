@@ -19,7 +19,8 @@ export async function POST(request) {
 
     // Make request to the payment gateway API
     const response = await fetch(
-      "https://api.sandbox.paycreategateway.com/api/v2/transactions/refund",
+      // "https://api.sandbox.paycreategateway.com/api/v2/transactions/refund",
+      "https://api.paycreategateway.com/api/v2/transactions/refund",
       {
         method: "POST",
         headers: {

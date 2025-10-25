@@ -27,6 +27,8 @@ const DeleteAccountRequests = () => {
 
       if (data.success) {
         setRequests(data.data || []);
+      } else if (data.msg === "No Delete Account Requests Found!") {
+        setRequests([]);
       } else {
         throw new Error(data.msg || 'Failed to fetch delete requests');
       }
@@ -182,9 +184,9 @@ const DeleteAccountRequests = () => {
                       <td className="text-muted ">
                         {request.userId?.phone || 'N/A'}
                       </td>
-                     
+
                       <td className="text-muted  text-nowrap">{request.userId?.DOB ? formatDate(request.userId.DOB) : 'N/A'}</td>
-                       <td>
+                      <td>
                         <div className="d-flex align-items-center gap-2">
                           <span className={`${getStatusClass(request.status)} py-1 px-3`}
                           >{request.status}</span>

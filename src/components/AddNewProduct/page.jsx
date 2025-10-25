@@ -46,6 +46,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
   const [category, setCategory] = useState([]);
   const [brandName, setBrandName] = useState("");
   const [adminId, setAdminId] = useState("");
+  const [shopId, setShopId] = useState("");
 
   const fileInputRef = useRef(null);
   const refreshKey = useSelector((state) => state.refresh.refreshKey);
@@ -56,6 +57,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (adminData?._id) {
       setAdminId(adminData._id);
+      setShopId(adminData.shopId._id);
     } else {
       toast.error("Invalid admin data. Redirecting...");
       // router.push("/auth/add-services");
@@ -113,6 +115,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
 
       const formData = new FormData();
       formData.append("adminId", adminId);
+      formData.append("shopId", shopId);
       formData.append("name", productName);
       formData.append("StockQuantity", stockQuantity);
       formData.append("discount", discount);

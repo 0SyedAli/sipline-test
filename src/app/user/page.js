@@ -74,7 +74,7 @@ const DeleteAccount = () => {
           <div className="d-flex justify-content-between align-items-center flex-column flex-sm-row w-100">
             <a href="https://thesipline.com" className="nav-link">HOME</a>
             <a className="navbar-brand" href='https://thesipline.com'>
-              <Image src="/images/dashLogo.png" width={80} height={80} alt='' />
+              <Image src="/images/dashLogo.png" width={80} height={80} alt='' priority={false} />
             </a>
             <a href="#!" className="nav-link">SUBSCRIBE FOR UPDATES</a>
           </div>

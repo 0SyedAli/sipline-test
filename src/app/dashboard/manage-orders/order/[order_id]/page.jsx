@@ -371,6 +371,7 @@ const Order = ({ params }) => {
                     id={product.productId?._id}
                     quantity={product.quantity || 0}
                     price={product.productId?.price || 0}
+                    image={product.productId?.productImages || []}
                     status={status}
                   />
                 </div>
@@ -422,15 +423,15 @@ const Order = ({ params }) => {
                 <div className="cs_user d-flex align-items-center gap-2">
                   <Image
                     src={customer?.profile_image
-                      ? `${process.env.NEXT_PUBLIC_IMAGE_URL}/${customer.profile_image}`
+                      ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${customer?.profile_image}`
                       : defaultUserImage}
                     alt="Customer"
                     width={50}
                     height={50}
                     className="rounded-circle"
-                    onError={(e) => {
-                      e.target.src = defaultUserImage;
-                    }}
+                    // onError={(e) => {
+                    //   e.target.src = defaultUserImage;
+                    // }}
                   />
                   <h3 className="m-0">
                     {customer?.full_name || "Guest Customer"}

@@ -21,21 +21,31 @@ export default function RefundRequestsPage() {
 
   const fetchRefundRequests = async () => {
     try {
-      setLoading(true)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/getAllRefundRequests`)
-      const result = await response.json()
+      setLoading(true);
+      setError(null); // clear previous errors
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/getAllRefundRequests`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch refund requests");
+      }
+
+      const result = await response.json();
 
       if (result.success) {
-        setRefundRequests(result.data || [])
+        setRefundRequests(result.data || []);
+      } else if (result.msg === "No Refund Requests Found!") {
+        setRefundRequests([]); // empty state instead of error
       } else {
-        setError("Failed to fetch refund requests")
+        throw new Error(result.msg || "Failed to fetch refund requests");
       }
     } catch (err) {
-      setError("Error fetching refund requests: " + err.message)
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
 
   const updateRefundStatus = async (refundId, status) => {
     try {

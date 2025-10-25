@@ -14,7 +14,7 @@ const NewOrder = ({ activeTab }) => {
   useEffect(() => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (adminData && adminData._id) {
-      setAdminId("681120f22f4715831181a9c4"); // Use the actual admin ID from session storage
+      setAdminId(adminData._id); // Use the actual admin ID from session storage
     } else {
       console.error("User not found or missing '_id' property");
       // router.push("/auth/login"); 2
@@ -106,9 +106,7 @@ const NewOrder = ({ activeTab }) => {
                           : "/images/default-avatar.png"
                       }
                       alt="User Avatar"
-                      onError={(e) => {
-                        e.target.src = "/images/default-avatar.png"; // Fallback if image fails to load
-                      }}
+                    
                     />
                     <h6>
                       {order.userId ? order.userId.fullName : "Guest User"}

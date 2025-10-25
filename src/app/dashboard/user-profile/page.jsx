@@ -59,7 +59,7 @@ const UserProfile = () => {
     if (adminData && adminData?._id && adminData?.shopId) {
       setAdminId(adminData?._id);
       setAdminData(adminData);
-      setShopId(adminData?.shopId);
+      setShopId(adminData?.shopId?._id);
     } else {
       console.error("User not found or missing '_id' property");
       // router.push("/auth/login"); 2
@@ -226,7 +226,7 @@ const UserProfile = () => {
       <div className="user_banner mt-5">
         <div className="up_upload">
           <div className="up_cover">
-            <img src={user_cover} alt="" />
+            <Image width={1461} height={300} src={user_cover} alt="Cover" priority={false} />
             {/* <div className="up_upload_btn">
               <FaPlus />
             </div> */}

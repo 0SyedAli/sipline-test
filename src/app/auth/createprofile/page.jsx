@@ -156,6 +156,7 @@ export default function CreateProfilePage() {
                   <input
                     type="number"
                     placeholder="yyyy"
+                    max={4}
                     value={dateOfBirth.year}
                     onChange={(e) => {
                       const value = e.target.value.slice(0, 4);

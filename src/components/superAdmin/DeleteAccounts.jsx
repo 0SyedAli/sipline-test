@@ -223,7 +223,7 @@ export default function DeleteAccounts() {
                     <div className="d-flex justify-content-between align-items-center gap-3 flex-wrap">
                         <h5 className="card-title mb-0 fw-bolder">Customer Orders</h5>
                         <div className="d-flex gap-2 align-items-center flex-wrap">
-                            <button className="btn btn-outline-primary btn-sm" onClick={fetchOrders} disabled={loading}>
+                            <button className="btn btn-outline-secondary btn-sm" onClick={fetchOrders} disabled={loading}>
                                 Refresh
                             </button>
                             <div className="position-relative">

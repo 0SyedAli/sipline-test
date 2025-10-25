@@ -57,13 +57,13 @@ const handleTabClick = (tab) => {
   return (
     <div className="sidebar_container">
       <div className="sidebar_header">
-        <Image src="/images/dashLogo.png" alt="Logo" width={130} height={100} />
+        <Image src="/images/dashLogo.png" priority={false} alt="Logo" width={130} height={100} />
         <button className="hamburger" onClick={toggleSidebar}>
           ☰
         </button>
       </div>
       <div className={`sidebar_menu ${isSidebarOpen ? "open" : ""}`}>
-        <Image src="/images/dashLogo.png" className="sm_logo" alt="Logo" width={130} height={100} />
+        <Image src="/images/dashLogo.png" priority={false} className="sm_logo" alt="Logo" width={130} height={100} />
         <button className="hamburger" style={{margin: "20px auto 0"}} onClick={toggleSidebar}>
           <RxCross2 />
         </button>

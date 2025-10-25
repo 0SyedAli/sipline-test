@@ -23,7 +23,7 @@ const Discounts = () => {
   useEffect(() => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (adminData?._id) {
-      setAdminId("681120f22f4715831181a9c4");
+      setAdminId(adminData?._id);
     } else {
       console.error("Admin not found");
       // router.push("/auth/add-services");

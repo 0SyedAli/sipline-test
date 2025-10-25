@@ -15,8 +15,8 @@ import { toast } from "react-toastify";
 const userCover = "/images/userCover.jpg";
 
 const UserProfile = () => {
-  const [categories] = useState(["Category1", "Category2", "Category3", "Category4"]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [tag, setTag] = useState("");
   const [error, setError] = useState(null);
   const [adminId, setAdminId] = useState("");
@@ -59,16 +59,35 @@ const UserProfile = () => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (adminData?._id && adminData?.shopId) {
       setAdminId(adminData._id);
-      setShopId(adminData.shopId);
+      // setShopId(adminData?.shopId?._id);
     } else {
       console.error("User not authenticated");
       // // router.push("/auth/login"); 2 2
     }
   }, [router]);
 
+  const fetchBusinessCategories = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/getAllbusinessCategories`
+      );
+      if (response?.data?.success && Array.isArray(response.data.data)) {
+        setCategories(response.data.data);
+      } else {
+        setCategories([]); // safe fallback
+        toast.error("Failed to load categories");
+      }
+    } catch (error) {
+      console.error("Fetch categories error:", error);
+      toast.error("Error loading categories");
+    }
+  };
+
   useEffect(() => {
     if (adminId) {
       getShopData();
+      fetchBusinessCategories();
+
     }
   }, [adminId]);
 
@@ -114,7 +133,7 @@ const UserProfile = () => {
       console.error(error);
     }
   };
-// console.log(selectedCategories);
+  // console.log(selectedCategories);
 
   const handleUpdateShop = async (e) => {
     e.preventDefault();
@@ -141,9 +160,12 @@ const UserProfile = () => {
     formDataToSend.append("cookingTime", formData.cookingTime);
     formDataToSend.append("barDetails", formData.barDetails);
     formDataToSend.append("address", formData.address);
-    formDataToSend.append("category", JSON.stringify(selectedCategories));
+    // formDataToSend.append("category", JSON.stringify(selectedCategories));
+    selectedCategories.forEach((cat) => {
+      formDataToSend.append("category", cat);
+    });
     formDataToSend.append("adminId", adminId);
-    formDataToSend.append("shopId", shopId);
+    formDataToSend.append("shopId", shopData?._id);
 
     try {
       const response = await axios.post(
@@ -180,7 +202,7 @@ const UserProfile = () => {
         <div className="user_banner mt-5">
           <div className="up_upload">
             <div className="up_cover">
-              <Image width={1461} height={300} src={userCover} alt="Cover" />
+              <Image width={1461} height={300} src={userCover} alt="Cover" priority={false} />
               {/* <div className="up_upload_btn">
                 <FaPlus />
               </div> */}
@@ -260,16 +282,15 @@ const UserProfile = () => {
                     onChange={(e) => setTag(e.target.value)}
                     aria-label="Search Category"
                   >
-                    <option value="">
-                      Search Category
-                    </option>
-                    {categories
-                      .filter((category) => !selectedCategories.includes(category))
-                      .map((category, index) => (
-                        <option key={index} value={category}>
-                          {category}
-                        </option>
-                      ))}
+                    <option value="">Search Category</option>
+                    {Array.isArray(categories) &&
+                      categories
+                        .filter((category) => !selectedCategories.includes(category.businessCatName))
+                        .map((category) => (
+                          <option key={category._id} value={category.businessCatName}>
+                            {category.businessCatName}
+                          </option>
+                        ))}
                   </select>
                   <button type="button" className="add_cat_btn" onClick={handleCategoryAdd}>
                     Add
@@ -287,7 +308,7 @@ const UserProfile = () => {
                   ))}
                 </div>
                 <div>
-                  <label htmlFor="cookingTime" className="mb-2">Cooking Time</label>
+                  <label htmlFor="barDetails" className="mb-2">Bar Details</label>
                   <Textarea
                     placeholder="Bar Details"
                     className="textarea_field2 textarea_field4"

@@ -1,4 +1,7 @@
+"use client"
+import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 const productimage1 = "/images/product1.jpg";
 const idLabel = "/images/receipt-2.png";
@@ -10,13 +13,25 @@ const NewOrderProductCard = ({
   quantity,
   coupon,
   price,
+  image
 }) => {
+  const [imgSrc, setImgSrc] = useState(
+    image ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${image}` : productimage1
+  );
   return (
     <div className="product_card">
-      <img className="product_image" src={productimage1} />
+      {/* <img className="product_image" src={productimage1} /> */}
+      <Image
+        src={imgSrc}
+        alt="Customer"
+        width={200}
+        height={200}
+        className="product_image"
+        onError={() => setImgSrc(productimage1)}
+      />
       <div className="product_top">
         {status && (
-          <div className="status_td">
+          <div className={`status_td ${status?.toLowerCase() || ""}`}>
             <span>{status}</span>
           </div>
         )}

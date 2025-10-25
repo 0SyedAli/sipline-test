@@ -78,12 +78,12 @@ const AllNotification = () => {
         {notifications.map(n => (
           <div key={n.notification_id} className="notify_item">
             <div className="noti_icon">
-              <Image src="/images/ticket.png" alt="ticket" width={40} height={40} />
+              <img src="/images/ticket.png" alt="ticket" />
             </div>
             <div className="d-flex justify-content-between w-100">
               <div>
-                <h5>{n.title}</h5>
-                <p dangerouslySetInnerHTML={{ __html: n.body }}></p>
+                <h5>#{n.orderId.slice(0, 5)}</h5>
+                <p dangerouslySetInnerHTML={{ __html: n.message }}></p>
               </div>
               <p>
                 <span>{formatTimeAgo(n.createdAt)}</span>

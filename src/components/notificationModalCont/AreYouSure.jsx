@@ -8,7 +8,7 @@ function AreYouSure({ onConfirm, couponId }) {
         aria-labelledby="exampleModalLabel2"
         aria-hidden="true"
       >
-        <div className="modal-dialog noti-modal-dialog">
+        <div className="modal-dialog noti-modal-dialog delete_modal_dialog">
           <div className="modal-content">
             <div className="modal-body">
               <h3 className="px-4 pb-4">Are You sure you want to delete this coupon?</h3>

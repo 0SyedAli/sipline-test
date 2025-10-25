@@ -137,7 +137,7 @@ export default function SignUp() {
               {/* <Link href="/auth/login" style={{ color: "blue!important", textDecoration: "underline" }}>Already have an account?</Link> */}
             </div>
             {error && <p style={{ color: "red" }}>{error}</p>}
-            <AuthBtn title="Login" type="submit" disabled={isLoading} />
+            <AuthBtn title="Sign Up" type="submit" disabled={isLoading} />
           </form>
           <div className='register_link'>
             <h5>Already have an account? <Link href="login">Login</Link></h5>

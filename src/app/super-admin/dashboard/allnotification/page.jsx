@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useNotifications } from "@/hooks/useNotifications";
+import { FaCircleInfo } from "react-icons/fa6";
 
 const AllNotification = () => {
   const [adminId, setAdminId] = useState(null);
@@ -69,14 +70,14 @@ const AllNotification = () => {
       </div>
       <div className="allNotification_body">
         {notifications.map((notification) => (
-          <div key={notification.notification_id} className="notify_item">
+          <div key={notification.notification_id} className="notify_item align-items-center">
             <div className="noti_icon">
-              <Image src={ticket} alt="ticket" width={40} height={40} />
+              <img src="/images/ticket.png" alt="ticket" />
             </div>
             <div className="d-flex justify-content-between w-100">
               <div>
-                <h5>{notification.title}</h5>
-                <p dangerouslySetInnerHTML={{ __html: notification.body }}></p>
+                <h5 className="mb-1">#{notification?.orderId.slice(0, 5)}</h5>
+                <p dangerouslySetInnerHTML={{ __html: notification.message }}></p>
               </div>
               <p className="">
                 <span>{formatTimeAgo(notification.createdAt)}</span>

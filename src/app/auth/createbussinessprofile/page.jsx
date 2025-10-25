@@ -13,13 +13,14 @@ const defaultProfileImage = "/images/default-avatar.png";
 export default function CreateBusinessProfilePage() {
   const router = useRouter();
   const [postalCode, setPostalCode] = useState("");
+  const [shopName, setShopName] = useState("");
   const header = useHeader();
   const [shopImage, setShopImage] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Loading state
   const [adminId, setAdminId] = useState(""); // Loading state
-  const [selectedCookingTime, setSelectedCookingTime] = useState("");
+  const [selectedCookingTime, setSelectedCookingTime] = useState("30 Mins");
   const cookingTime = ["30 min", "40 min", "50 min"];
   const [existingImage, setExistingImage] = useState(defaultProfileImage);
 
@@ -42,16 +43,22 @@ export default function CreateBusinessProfilePage() {
       router.replace("/auth/login"); // Redirect if no admin data
     }
 
-  }, []);
+  }, [router]);
 
   const handleNext = async (e) => {
     e.preventDefault();
-
+    if (!shopImage || !postalCode || !cookingTime || !shopName) {
+      setError("All fields are required.");
+      setIsLoading(false);
+      setSuccess(false);
+      return;
+    }
     setIsLoading(true);
 
     const apiPayload = new FormData();
     apiPayload.append("adminId", adminId);
     apiPayload.append("shopImage", shopImage);
+    apiPayload.append("barName", shopName);
     apiPayload.append("postalCode", postalCode);
     apiPayload.append("cookingTime", selectedCookingTime);
 
@@ -110,12 +117,22 @@ export default function CreateBusinessProfilePage() {
                 onFileChange={handleFileChange}
                 existingImage={existingImage}
               />
+              <label>Shop Name</label>
+              <InputField
+                type="text"
+                id="shop_name"
+                classInput="classInput"
+                placeholder="Enter Bar Name"
+                value={shopName}
+                onChange={(e) => setShopName(e.target.value)}
+                required
+              />
               <label>Postal Code</label>
               <InputField
                 type="number"
                 id="postal_code"
                 classInput="classInput"
-                placeholder="25"
+                placeholder="57525"
                 value={postalCode}
                 onChange={(e) => setPostalCode(e.target.value)}
                 required
@@ -124,10 +141,11 @@ export default function CreateBusinessProfilePage() {
               <InputField
                 type="text"
                 id="cooking_time"
+                disabled={true}
                 classInput="classInput"
-                placeholder="Enter cooking time (e.g. 30 mins)"
+                placeholder="30 mins"
                 value={selectedCookingTime}
-                onChange={(e) => setSelectedCookingTime(e.target.value)}
+                // onChange={(e) => setSelectedCookingTime(e.target.value)}
                 required
               />
               {/* <div className="inputField">

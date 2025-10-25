@@ -6,7 +6,7 @@ export default function ShopImage({ shop }) {
 
   useEffect(() => {
     if (shop?.shopImage || shop?.profileImage) {
-      console.log(shop?.profileImage);
+      // console.log("abc", shop?.profileImage);
       
       const testUrl = `${process.env.NEXT_PUBLIC_IMAGE_URL}${shop.shopImage || shop?.profileImage}`;
       fetch(testUrl, { method: "HEAD" })

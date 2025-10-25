@@ -10,9 +10,7 @@ const SideBar2 = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(pathname);
   const [loading, setLoading] = useState(false);
-  const [adminData, setAdminData] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Sidebar visibility toggle
-  const customer = "/images/default-avatar.png";
 
   // useEffect(() => {
   //   const adminData = JSON.parse(sessionStorage.getItem("admin"));
@@ -30,10 +28,12 @@ const SideBar2 = () => {
     { href: "/super-admin/dashboard/manage-bars", icon: "/images/li3.png", text: "Manage Bars" },
     { href: "/super-admin/dashboard/manage-refunds", icon: "/images/li4.png", text: "Manage Refunds" },
     { href: "/super-admin/dashboard/manage-delete-accounts", icon: "/images/li4.png", text: "Manage Delete Accounts" },
-    { href: "/super-admin/dashboard/features", icon: "/images/calendar-tick.png", text: "Features Ads" },
+    { href: "/super-admin/dashboard/features", icon: "/images/calendar-tick.png", text: "Featured Ads" },
+    { href: "/super-admin/dashboard/support", icon: "/images/calendar-tick.png", text: "Support" },
+    { href: "/super-admin/dashboard/manage-category", icon: "/images/calendar-tick.png", text: "Manage Category" },
     { href: "/super-admin/dashboard/privacy-policy", icon: "/images/li7.png", text: "Privacy Policy" },
     { href: "/super-admin/dashboard/terms-&-condition", icon: "/images/li8.png", text: "Terms & Conditions" },
-    { href: "/super-admin/auth/login?action=logout", icon: "/images/li9.png", text: "Log Out" },
+    // { href: "/super-admin/auth/login?action=logout", icon: "/images/li9.png", text: "Log Out" },
   ];
 
   useEffect(() => {
@@ -57,13 +57,13 @@ const SideBar2 = () => {
   return (
     <div className="sidebar_container">
       <div className="sidebar_header">
-        <Image src="/images/dashLogo.png" alt="Logo" width={130} height={100} />
+        <Image src="/images/dashLogo.png" priority={false} alt="Logo" width={130} height={100} />
         <button className="hamburger" onClick={toggleSidebar}>
           ☰
         </button>
       </div>
       <div className={`sidebar_menu ${isSidebarOpen ? "open" : ""}`}>
-        <Image src="/images/dashLogo.png" className="sm_logo" alt="Logo" width={130} height={100} />
+        <Image src="/images/dashLogo.png" priority={false} className="sm_logo" alt="Logo" width={130} height={100} />
         <button className="hamburger" style={{ margin: "20px auto 0" }} onClick={toggleSidebar}>
           <RxCross2 />
         </button>
@@ -106,7 +106,19 @@ const SideBar2 = () => {
           </div>
         </Link> */}
       </div>
-
+      <div className="sid_logOut">
+        <Link href="/super-admin/auth/login?action=logout">
+          <span>
+            <Image
+              src="/images/li9.png"
+              alt={`Log Out Icon`}
+              width={24}
+              height={24}
+            />
+          </span>
+          Log Out
+        </Link>
+      </div>
     </div>
   );
 };

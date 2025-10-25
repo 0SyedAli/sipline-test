@@ -11,9 +11,10 @@ function RefundNow({
   selectedRefund,
   onRefundSuccess,
   username,
-  password
+  password,
+  refundAmount
 }) {
-  const [amount, setAmount] = useState("")
+  const [amount, setAmount] = useState(refundAmount)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
 
@@ -129,11 +130,11 @@ function RefundNow({
               type="number"
               step="0.01"
               min="0.01"
-              placeholder="$10.00"
               id="refundAmount"
               classInput="classInput"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              disabled={true}
+              // onChange={(e) => setAmount(e.target.value)}
               required
             />
           </div>

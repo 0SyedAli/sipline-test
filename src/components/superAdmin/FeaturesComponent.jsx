@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useState, useEffect, useRef } from "react"
+import FeatureImage from "./FeatureImage"
 
 export default function FeaturesComponent() {
   const [features, setFeatures] = useState([])
@@ -354,7 +355,7 @@ export default function FeaturesComponent() {
                         <div className="card-body">
                           <div className="row align-items-center">
                             <div className="col-auto">
-                              <Image
+                              {/* <Image
                                 src={feature.bannerImage && `${process.env.NEXT_PUBLIC_IMAGE_URL}${feature.bannerImage}`}
                                 alt="Feature"
                                 width={80}
@@ -368,7 +369,8 @@ export default function FeaturesComponent() {
                                 onError={(e) => {
                                   e.target.src = "/images/default-avatar.png"
                                 }}
-                              />
+                              /> */}
+                              <FeatureImage fImage={feature} />
                             </div>
                             <div className="col">
                               <h6 className="mb-1">{feature?.shopId?.shopName || "Bar Name Here"}</h6>
