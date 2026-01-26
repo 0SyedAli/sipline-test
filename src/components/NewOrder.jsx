@@ -73,7 +73,7 @@ const NewOrder = ({ activeTab }) => {
           </div>
         </div>
       ) : orders && orders.length === 0 ? (
-        <p className="mt-5">No orders found with status: {activeTab}.</p>
+        <p className="">No orders found with status: {activeTab}.</p>
       ) : (
         <div className="table-responsive">
           <table className="table caption-top">

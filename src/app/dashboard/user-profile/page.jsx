@@ -135,7 +135,9 @@ const UserProfile = () => {
       const result = await response.json();
 
       if (response.ok && result?.success) {
-        toast.success(result?.msg || "Profile updated successfully!");
+        toast.success(result?.msg || "Profile updated successfully!", {
+          autoClose: 3000,
+        });
         setSuccess(true);
         await getShop();  // <-- Add this line
 
@@ -183,7 +185,9 @@ const UserProfile = () => {
       const data = await response.json();
 
       if (data.success) {
-        toast.success("Products fetched successfully!");
+        toast.success("Products fetched successfully!", {
+          autoClose: 3000,
+        });
         setProducts(data.data);
       } else {
         throw new Error(data.msg || "Failed to fetch products.");
@@ -302,6 +306,7 @@ const UserProfile = () => {
                                 name={product.name}
                                 price={product.price}
                                 stockQuantity={product.StockQuantity}
+                                ifEdit={true}
                                 image={
                                   product.productImages?.[0]
                                     ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${product.productImages?.[0]}`
@@ -314,7 +319,7 @@ const UserProfile = () => {
                         <div className="row mt-4">
                           <div className="col-12 text-end">
                             <h4 style={{ justifyContent: 'flex-end' }}>
-                              <Link href="manage-products" style={{ color: "blue" }}>
+                              <Link href="manage-product" style={{ color: "blue" }}>
                                 View More Products
                                 <span style={{ paddingLeft: '10px' }}>
                                   <FaArrowRightLong />

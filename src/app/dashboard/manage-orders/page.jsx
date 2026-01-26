@@ -22,10 +22,10 @@ const [activeTab, setActiveTab] = useState("Pending");
             Preparing
           </button>
           <button
-            className={activeTab === "Delivered" ? "active" : ""}
-            onClick={() => setActiveTab("Delivered")}
+            className={activeTab === "Ready" ? "active" : ""}
+            onClick={() => setActiveTab("Ready")}
           >
-            Delivered
+            Ready
           </button>
           <button
             className={activeTab === "Picked" ? "active" : ""}

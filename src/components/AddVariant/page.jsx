@@ -50,11 +50,11 @@ export const AddVariant = ({ btntitle, onClose }) => {
     try {
       setLoading(true); // Start loading
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/AllCategoriesByAdmin?adminId=${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/adminProfile?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
-        const categories = response?.data?.data || []; // Ensure it's an array
+        const categories = response?.data?.data?.categoryId || []; // Ensure it's an array
         setCategory(categories);
         setTimeout(() => {
           toast.success("Categories fetched successfully!");
@@ -117,7 +117,7 @@ export const AddVariant = ({ btntitle, onClose }) => {
     formData.append("StockQuantity", stockQuantity);
     formData.append("discount", discount);
     formData.append("price", price);
-    formData.append("category", categoryId);
+    formData.append("categoryId", categoryId);
     formData.append("brandName", brandName);
     // Append all images
     productImages.forEach((file) => {
@@ -286,7 +286,7 @@ export const AddVariant = ({ btntitle, onClose }) => {
                 </option>
                 {Array.isArray(category) && category.map((cat, index) => (
                   <option key={cat._id} value={cat._id}>
-                    {cat.categoryName}
+                    {cat.businessCatName}
                   </option>
                 ))}
               </select>

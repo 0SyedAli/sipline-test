@@ -24,6 +24,15 @@ const UserProfile = () => {
   const [shopData, setShopData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [workingDays, setWorkingDays] = useState({
+    Monday: { isActive: false, openingTime: "", closeingTime: "" },
+    Tuesday: { isActive: false, openingTime: "", closeingTime: "" },
+    Wednesday: { isActive: false, openingTime: "", closeingTime: "" },
+    Thursday: { isActive: false, openingTime: "", closeingTime: "" },
+    Friday: { isActive: false, openingTime: "", closeingTime: "" },
+    Saturday: { isActive: false, openingTime: "", closeingTime: "" },
+    Sunday: { isActive: false, openingTime: "", closeingTime: "" },
+  });
   const [formData, setFormData] = useState({
     barName: "",
     postalCode: "",
@@ -125,6 +134,24 @@ const UserProfile = () => {
           // If your component needs a preview, you might need to fetch the image
         }
         setSelectedCategories(response.data?.data?.category || []);
+        // ✅ Map Working Days into state
+        if (response.data?.data?.workingDays) {
+          const apiDays = response.data.data.workingDays;
+
+          const formatted = { ...workingDays };
+
+          apiDays.forEach((wd) => {
+            if (formatted[wd.day]) {
+              formatted[wd.day] = {
+                isActive: wd.isActive,
+                openingTime: wd.openingTime || "",
+                closeingTime: wd.closeingTime || "",
+              };
+            }
+          });
+
+          setWorkingDays(formatted);
+        }
       } else {
         setError("Failed to fetch shop data.");
       }
@@ -132,6 +159,27 @@ const UserProfile = () => {
       setError("Error fetching shop data.");
       console.error(error);
     }
+  };
+
+  // console.log("abc:", `${formData.shopImage}`);
+  const handleActiveToggle = (day) => {
+    setWorkingDays((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        isActive: !prev[day].isActive,
+      },
+    }));
+  };
+
+  const handleTimeChange = (day, field, value) => {
+    setWorkingDays((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [field]: value,
+      },
+    }));
   };
   // console.log(selectedCategories);
 
@@ -153,7 +201,14 @@ const UserProfile = () => {
     if (imageFile) {
       formDataToSend.append("shopImage", imageFile);
     }
+    const formattedWorkingDays = Object.keys(workingDays).map((day) => ({
+      day,
+      isActive: workingDays[day].isActive,
+      openingTime: workingDays[day].openingTime,
+      closeingTime: workingDays[day].closeingTime,
+    }));
 
+    formDataToSend.append("workingDays", JSON.stringify(formattedWorkingDays));
     // Append other form data
     formDataToSend.append("barName", formData.barName);
     formDataToSend.append("postalCode", formData.postalCode);
@@ -161,9 +216,9 @@ const UserProfile = () => {
     formDataToSend.append("barDetails", formData.barDetails);
     formDataToSend.append("address", formData.address);
     // formDataToSend.append("category", JSON.stringify(selectedCategories));
-    selectedCategories.forEach((cat) => {
-      formDataToSend.append("category", cat);
-    });
+    // selectedCategories.forEach((cat) => {
+    //   formDataToSend.append("category", cat);
+    // });
     formDataToSend.append("adminId", adminId);
     formDataToSend.append("shopId", shopData?._id);
 
@@ -180,8 +235,11 @@ const UserProfile = () => {
       );
 
       if (response.data?.success) {
-        toast.success(response.data?.msg || "Profile updated successfully!");
+        toast.success(response.data?.msg || "Profile updated successfully!", {
+          autoClose: 3000,
+        });
         getShopData(); // Refresh the data
+        // router.back();
       } else {
         toast.error(response.data?.msg || "Failed to update profile");
         setError(response.data?.msg || "Failed to update profile");
@@ -194,7 +252,6 @@ const UserProfile = () => {
       setIsLoading(false);
     }
   };
-  // console.log("abc:", `${formData.shopImage}`);
 
   return (
     <div className="page">
@@ -218,9 +275,9 @@ const UserProfile = () => {
 
         <div className="user_profile_body">
           <div className="row">
-            <div className="col-8">
+            <div className="col-md-8">
               <div className="row">
-                <div className="col-6">
+                <div className="col-md-6">
                   <label htmlFor="barName">Business Name</label>
                   <InputField
                     type="text"
@@ -232,7 +289,7 @@ const UserProfile = () => {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="col-6">
+                <div className="col-md-6">
                   <label htmlFor="postalCode">Postal Code</label>
                   <InputField
                     type="number"
@@ -244,7 +301,7 @@ const UserProfile = () => {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="col-6">
+                <div className="col-md-6">
                   <label htmlFor="address">Address</label>
                   <InputField
                     type="text"
@@ -256,7 +313,7 @@ const UserProfile = () => {
                     onChange={handleInputChange}
                   />
                 </div>
-                <div className="col-6">
+                <div className="col-md-6">
                   <label htmlFor="cookingTime">Cooking Time</label>
                   <InputField
                     type="text"
@@ -270,9 +327,9 @@ const UserProfile = () => {
                 </div>
               </div>
             </div>
-            <div className="col-4">
+            <div className="col-md-4">
               <div>
-                <label htmlFor="category" className="mb-2">
+                {/* <label htmlFor="category" className="mb-2">
                   Add Category
                 </label>
                 <div className="d-flex align-items-center gap-2">
@@ -306,7 +363,7 @@ const UserProfile = () => {
                       </span>
                     </div>
                   ))}
-                </div>
+                </div> */}
                 <div>
                   <label htmlFor="barDetails" className="mb-2">Bar Details</label>
                   <Textarea
@@ -319,13 +376,73 @@ const UserProfile = () => {
                 </div>
               </div>
             </div>
-            <div className="col-2">
-              <div className="">
-                <AuthBtn
-                  title={isLoading ? "Processing..." : "Submit"}
-                  type="submit"
-                  disabled={isLoading}
-                />
+            <div className="col-lg-8">
+              <label className="mb-3">Working Days & Timings</label>
+
+              <div className="table-responsive">
+                <table className="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style={{ width: "100px" }}>Day</th>
+                      <th style={{ width: "50px", textAlign: "center" }}>Active</th>
+                      <th style={{ width: 120 }}>Start</th>
+                      <th style={{ width: 120 }}>End</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {Object.keys(workingDays).map((day) => (
+                      <tr key={day}>
+                        <td>{day}</td>
+
+                        <td className="text-center">
+                          <input
+                            type="checkbox"
+                            checked={workingDays[day].isActive}
+                            onChange={() => handleActiveToggle(day)}
+                          />
+                        </td>
+
+                        <td>
+                          <input
+                            type="time"
+                            className="form-control"
+                            disabled={!workingDays[day].isActive}
+                            value={workingDays[day].openingTime}
+                            onChange={(e) =>
+                              handleTimeChange(day, "openingTime", e.target.value)
+                            }
+                          />
+                        </td>
+
+                        <td>
+                          <input
+                            type="time"
+                            className="form-control"
+                            disabled={!workingDays[day].isActive}
+                            value={workingDays[day].closeingTime}
+                            onChange={(e) =>
+                              handleTimeChange(day, "closeingTime", e.target.value)
+                            }
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="col-md-12">
+              <div className="row">
+                <div className="col-3">
+                  <div className="">
+                    <AuthBtn
+                      title={isLoading ? "Processing..." : "Submit"}
+                      type="submit"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

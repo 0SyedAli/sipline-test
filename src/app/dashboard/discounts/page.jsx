@@ -65,7 +65,9 @@ const Discounts = () => {
       );
 
       if (response?.data?.success) {
-        toast.success("Coupon deleted successfully");
+        toast.success("Coupon deleted successfully", {
+          autoClose: 2000,
+        });
         fetchCoupons(); // Refresh the list after deletion
       } else {
         throw new Error(response?.data?.msg || "Failed to delete coupon");
@@ -111,9 +113,9 @@ const Discounts = () => {
           </div>
         </div>
       ) : error ? (
-        <p className="mt-5 error_color">Error: {error}</p>
+        <p className="error_color">Error: {error}</p>
       ) : coupons.length === 0 ? (
-        <p className="mt-5">No coupons found. Create your first coupon!</p>
+        <p className="">No coupons found. Create your first coupon!</p>
       ) : (
         <div className="transaction_body discount2_body">
           {coupons.map((coupon) => (

@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
-import "../../../styles/auth.module.css";
-import styles from "../../../styles/auth.module.css";
+import "@/styles/auth.module.css";
+import styles from "@/styles/auth.module.css";
 import { usePathname } from "next/navigation";
 import HeaderContext from "@/components/context/HeaderContext";
 import { useRouter } from "next/navigation";
@@ -26,12 +26,12 @@ export default function AuthLayout({ children, success, headTitle }) {
     otp: {
       title: "OTP",
       description:
-        "We have sent you an email containing a 6-digit verification code. Please enter the code to verify your identity",
+        "We have sent you an email containing a 4-digit verification code. Please enter the code to verify your identity",
     },
     otpverify: {
       title: "OTP",
       description:
-        "We have sent you an email containing a 6-digit verification code. Please enter the code to verify your identity",
+        "We have sent you an email containing a 4-digit verification code. Please enter the code to verify your identity",
     },
     reset: {
       title: "Reset Password",

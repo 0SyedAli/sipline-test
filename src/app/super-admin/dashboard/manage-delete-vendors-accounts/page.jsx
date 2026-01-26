@@ -26,7 +26,18 @@ const DeleteAccountRequests = () => {
       const data = await response.json();
 
       if (data.success) {
-        setRequests(data.data || []);
+        const all = data.data || [];
+
+        const users = all.filter(req => req.userId); // Users only
+
+        const vendors = all.filter(
+          req => req.adminId && !req.userId  // Vendors only
+        );
+
+        setRequests({
+          users,
+          vendors
+        });
       } else if (data.msg === "No Delete Account Requests Found!") {
         setRequests([]);
       } else {
@@ -102,13 +113,13 @@ const DeleteAccountRequests = () => {
         return 'status-badge';
     }
   };
-
+  const vendorRequests = requests.vendors || [];
   return (
     <div className="page-container">
 
 
       <div className="page-header">
-        <h1 className="page-title mb-0">Delete Account Requests</h1>
+        <h1 className="page-title mb-0">Vendor Delete Account Requests</h1>
         <button
           className="refresh-btn"
           onClick={fetchDeleteRequests}
@@ -136,7 +147,7 @@ const DeleteAccountRequests = () => {
           <span className="loading-spinner" style={{ width: '24px', height: '24px' }}></span>
           <p>Loading delete requests...</p>
         </div>
-      ) : requests.length === 0 ? (
+      ) : vendorRequests === 0 ? (
         <div className="empty-state">
           <p>No delete account requests found.</p>
         </div>
@@ -148,17 +159,17 @@ const DeleteAccountRequests = () => {
                 <thead className="table-light">
                   <tr>
                     <th scope="col" className="fw-medium text-muted">
-                      User Name
+                      Full Name
                     </th>
                     <th scope="col" className="fw-medium text-muted">
-                      User Email
+                      Email
                     </th>
                     <th scope="col" className="fw-medium text-muted">
-                      Phone
+                      Address
                     </th>
-                    <th scope="col" className="fw-medium text-muted">
+                    {/* <th scope="col" className="fw-medium text-muted">
                       Date of Birth
-                    </th>
+                    </th> */}
                     <th scope="col" className="fw-medium text-muted">
                       Status
                     </th>
@@ -168,24 +179,26 @@ const DeleteAccountRequests = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {requests.map((request) => (
+                  {vendorRequests.map((request) => (
+
                     <tr key={request._id}>
+                      {/* {console.log(request?.adminId?.shopId?.barName)} */}
                       <td>
                         <div className="d-flex align-items-center gap-3">
-                          <ShopImage shop={request?.userId} />
+                          <ShopImage shop={request?.adminId?.shopId} />
                           <div>
-                            <div className="fw-medium text-dark text-nowrap">{request?.userId?.fullName || "Unknown Bar"}</div>
+                            <div className="fw-medium text-dark text-nowrap">{request?.adminId?.shopId?.barName || "Unknown Bar"}</div>
                           </div>
                         </div>
                       </td>
                       <td className="text-muted ">
-                        {request.userId?.email || 'N/A'}
+                        {request?.adminId?.email || 'N/A'}
                       </td>
                       <td className="text-muted ">
-                        {request.userId?.phone || 'N/A'}
+                        {request?.adminId?.shopId?.address || 'N/A'}
                       </td>
 
-                      <td className="text-muted  text-nowrap">{request.userId?.DOB ? formatDate(request.userId.DOB) : 'N/A'}</td>
+                      {/* <td className="text-muted  text-nowrap">{request.shopId?.DOB ? formatDate(request.userId.DOB) : 'N/A'}</td> */}
                       <td>
                         <div className="d-flex align-items-center gap-2">
                           <span className={`${getStatusClass(request.status)} py-1 px-3`}
@@ -209,8 +222,8 @@ const DeleteAccountRequests = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+              </table >
+            </div >
             {/* <div className="d-flex justify-content-between align-items-start p-3 bottom_pagination border-top gap-3">
               <div className="d-flex align-items-center gap-2 flex-wrap">
                 <select
@@ -251,8 +264,8 @@ const DeleteAccountRequests = () => {
                 </div>
               </div>
             </div> */}
-          </div>
-        </div>
+          </div >
+        </div >
       )
       }
     </div >

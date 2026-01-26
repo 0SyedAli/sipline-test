@@ -1,19 +1,20 @@
 "use client";
 import Link from "next/link";
-import NotificationModal from "./superAdmin/NotificationModal";
 import Image from "next/image";
-import { useDisclosure } from "@chakra-ui/react";
-import AddCategory from "./Modal/AddCategory";
+import AddBusCategory from "./Modal/AddBusCategory";
 import { useDispatch } from 'react-redux';
 import { triggerRefresh } from "src/lib/redux/store/slices/refreshSlice";
 import { useState } from "react";
 import { RiMenu3Line } from "react-icons/ri";
-import AddBusCategory from "./Modal/AddBusCategory";
 
 const TopBar2 = () => {
   const dispatch = useDispatch();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [isOpen, setIsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -36,62 +37,20 @@ const TopBar2 = () => {
           </h2>
           <p>Are you thirsty? Would you like something?</p>
         </div>
-        <div
-          className={`top_menu d-flex align-items-center gap-3 ${menuOpen ? "open" : ""
-            }`}
-        >
-                   <div onClick={onOpen} className="btn btntheme3">
-              Add Category
-            </div>
-          {/* <button
-            type="button"
-            className="noti_btn"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
-          >
-            <Image
-              src="/images/notification.png"
-              alt="notification icon"
-              width={25}
-              height={25}
-            />
-          </button> */}
-        </div>
-        {/* <div className="menu_wrapper">
-          <button
-            className="menu_toggle"
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            <RiMenu3Line />
-          </button>
-          <div
-            className={`top_menu d-flex align-items-center gap-3 ${menuOpen ? "open" : ""
-              }`}
-          >
-            <button
-              type="button"
-              className="noti_btn"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-            >
-              <Image
-                src="/images/notification.png"
-                alt="notification icon"
-                width={25}
-                height={25}
-              />
-            </button>
+
+        <div className={`top_menu d-flex align-items-center gap-3 ${menuOpen ? "open" : ""}`}>
+          <div onClick={onOpen} className="btn btntheme3">
+            Add Category
           </div>
-        </div> */}
+        </div>
       </div>
+
       <AddBusCategory
         btntitle="Add now"
         isOpen={isOpen}
         onClose={onClose}
         onSuccess={() => dispatch(triggerRefresh())}
       />
-      {/* <NotificationModal /> */}
     </>
   );
 };

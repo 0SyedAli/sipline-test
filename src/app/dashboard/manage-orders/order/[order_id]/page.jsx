@@ -307,7 +307,9 @@ const Order = ({ params }) => {
       const data = await response.json();
       if (data.success) {
         setStatus(newStatus);
-        toast.success(data?.msg, "Status Updated Successful!")
+        toast.success(data?.msg, "Status Updated Successful!", {
+          autoClose: 3000,
+        })
       } else {
         throw new Error(data.msg || "Status update failed");
       }
@@ -384,14 +386,17 @@ const Order = ({ params }) => {
               <div className="order_map mb-3">
                 <div style={{ position: "relative", height: "350px", width: "100%" }}>
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d117944.0852058463!2d-94.4387242276673!3d39.03045329060634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x87c0f75eafe99997%3A0x558525e66aaa51a2!2sKansas%20City%2C%20MO%2C%20USA!5e0!3m2!1sen!2s!4v1726036305513!5m2!1sen!2s"
+                    src={`https://www.google.com/maps/embed/v1/view?key=YOUR_GOOGLE_MAPS_API_KEY
+      &center=${orderDetails?.shopId?.latitude},${orderDetails?.shopId?.longitude}
+      &zoom=14
+      &maptype=roadmap`}
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Delivery Location Map"
+                    title={orderDetails?.shopId?.address}
                   />
                 </div>
               </div>
@@ -429,9 +434,9 @@ const Order = ({ params }) => {
                     width={50}
                     height={50}
                     className="rounded-circle"
-                    // onError={(e) => {
-                    //   e.target.src = defaultUserImage;
-                    // }}
+                  // onError={(e) => {
+                  //   e.target.src = defaultUserImage;
+                  // }}
                   />
                   <h3 className="m-0">
                     {customer?.full_name || "Guest Customer"}
@@ -460,25 +465,25 @@ const Order = ({ params }) => {
                   )}
                   {status === "Preparing" && (
                     <button
-                      onClick={() => updateStatus("Picked")}
+                      onClick={() => updateStatus("Ready")}
                       disabled={statusLoading}
                       className="themebtn4 blue btn"
+                    >
+                      {statusLoading ? <Spinner2 /> : "Ready"}
+
+                    </button>
+                  )}
+                  {status === "Ready" && (
+                    <button
+                      onClick={() => updateStatus("Picked")}
+                      disabled={statusLoading}
+                      className="themebtn4 green btn"
                     >
                       {statusLoading ? <Spinner2 /> : "Mark as Picked"}
 
                     </button>
                   )}
                   {status === "Picked" && (
-                    <button
-                      onClick={() => updateStatus("Delivered")}
-                      disabled={statusLoading}
-                      className="themebtn4 green btn"
-                    >
-                      {statusLoading ? <Spinner2 /> : "Mark as Delivered"}
-
-                    </button>
-                  )}
-                  {status === "Delivered" && (
                     <button
                       // onClick={() => updateStatus("Delivered")}
                       className="themebtn4 text-dark border-2 border-dark success btn"

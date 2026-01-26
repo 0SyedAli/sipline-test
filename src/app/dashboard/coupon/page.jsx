@@ -224,7 +224,9 @@ const Discount = () => {
 
   const handleResponse = (response) => {
     if (response.data.success) {
-      toast.success(response.data.msg || (couponId ? "Coupon updated successfully!" : "Coupon created successfully!"));
+      toast.success(response.data.msg || (couponId ? "Coupon updated successfully!" : "Coupon created successfully!"), {
+        autoClose: 3000,
+      });
       router.push("/dashboard/discounts");
     } else {
       throw new Error(response.data.msg || "Operation failed");

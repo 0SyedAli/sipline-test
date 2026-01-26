@@ -6,9 +6,20 @@ import { useHeader } from "@/components/context/HeaderContext";
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
 import { toast } from "react-toastify";
 export default function CreateBusinessProfilePage3() {
-  const [workingDays, setWorkingDays] = useState([]);
-  const [workStartTime, setWorkStartTime] = useState("");
-  const [workEndTime, setWorkEndTime] = useState("");
+  // const [workingDays, setWorkingDays] = useState([]);
+  // const [workStartTime, setWorkStartTime] = useState("");
+  // const [workEndTime, setWorkEndTime] = useState("");
+  const [workingDays, setWorkingDays] = useState({
+    Monday: { isActive: false, openingTime: "", closeingTime: "" },
+    Tuesday: { isActive: false, openingTime: "", closeingTime: "" },
+    Wednesday: { isActive: false, openingTime: "", closeingTime: "" },
+    Thursday: { isActive: false, openingTime: "", closeingTime: "" },
+    Friday: { isActive: false, openingTime: "", closeingTime: "" },
+    Saturday: { isActive: false, openingTime: "", closeingTime: "" },
+    Sunday: { isActive: false, openingTime: "", closeingTime: "" },
+  });
+
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(""); // Store only one error at a time
   const [success, setSuccess] = useState(""); // Store only one error at a time
@@ -42,15 +53,52 @@ export default function CreateBusinessProfilePage3() {
   }, [router]);
 
   // Handle day change
-  const handleDayChange = (e) => {
-    const day = e.target.value;
-    if (e.target.checked) {
-      setWorkingDays([...workingDays, day]);
-    } else {
-      setWorkingDays(workingDays.filter((d) => d !== day));
-    }
+  // const handleDayChange = (e) => {
+  //   const day = e.target.value;
+  //   if (e.target.checked) {
+  //     setWorkingDays([...workingDays, day]);
+  //   } else {
+  //     setWorkingDays(workingDays.filter((d) => d !== day));
+  //   }
+  // };
+
+  const handleDayChange = (day) => {
+    setWorkingDays(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        isActive: !prev[day].isActive,
+      }
+    }));
+  };
+  const updateDayTime = (day, field, value) => {
+    setWorkingDays(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [field]: value,
+      }
+    }));
+  };
+  const handleActiveToggle = (day) => {
+    setWorkingDays(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        isActive: !prev[day].isActive,
+      },
+    }));
   };
 
+  const handleTimeChange = (day, field, value) => {
+    setWorkingDays(prev => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        [field]: value,
+      },
+    }));
+  };
   // Ensure seconds are added as :00 to the time input
   const formatTimeWithSeconds = (time) => {
     if (time && !time.includes(":00")) {
@@ -71,22 +119,51 @@ export default function CreateBusinessProfilePage3() {
   };
 
   const handleNext = async () => {
-    if (!workingDays || !workStartTime || !workEndTime) {
-      setError("All fields are required.");
+    // if (!workingDays || !workStartTime || !workEndTime) {
+    //   setError("All fields are required.");
+    //   setIsLoading(false);
+    //   setSuccess(false);
+    //   return;
+    // }
+    const activeDays = Object.keys(workingDays).filter(
+      (day) => workingDays[day].isActive
+    );
+
+    // No active days selected
+    if (activeDays.length === 0) {
+      setError("Please select at least one working day.");
       setIsLoading(false);
-      setSuccess(false);
       return;
+    }
+
+    // Check time for each active day
+    for (const day of activeDays) {
+      const { openingTime, closeingTime } = workingDays[day];
+      if (!openingTime || !closeingTime) {
+        setError(`Please select start & end time for ${day}.`);
+        setIsLoading(false);
+        return;
+      }
     }
 
     setError(null); // Clear any existing errors
     setIsLoading(true);
 
-    const formattedWorkingDays = workingDays.map((day) => ({
+    // const formattedWorkingDays = workingDays.map((day) => ({
+    //   day,
+    //   isActive: true,
+    //   openingTime: workStartTime,
+    //   closeingTime: workEndTime,
+    // }));
+
+    const formattedWorkingDays = Object.keys(workingDays).map((day) => ({
       day,
-      isActive: true,
-      openingTime: workStartTime,
-      closeingTime: workEndTime,
+      isActive: workingDays[day].isActive,
+      openingTime: workingDays[day].openingTime,
+      closeingTime: workingDays[day].closeingTime,
     }));
+
+
 
     const apiPayload = new FormData();
     apiPayload.append("adminId", adminId);
@@ -134,7 +211,7 @@ export default function CreateBusinessProfilePage3() {
           </div>
           <form className="position-relative mt-5 pt-0">
             <fieldset>
-              <div className="calender_container">
+              {/* <div className="calender_container">
                 <label htmlFor="working-days" className="pb-1">
                   Select Working Days
                 </label>
@@ -164,9 +241,9 @@ export default function CreateBusinessProfilePage3() {
 
               <label htmlFor="time-range" className="mt-2">
                 Time Range
-              </label>
+              </label> */}
               <div className="cs-form time_picker d-flex gap-3 align-items-center py-3">
-                <div className="d-flex flex-column">
+                {/* <div className="d-flex flex-column w-100">
                   <input
                     type="time"
                     className="form-control"
@@ -175,14 +252,77 @@ export default function CreateBusinessProfilePage3() {
                   />
                 </div>
                 <span>To</span>
-                <div className="d-flex flex-column">
+                <div className="d-flex flex-column w-100">
                   <input
                     type="time"
                     className="form-control"
                     value={workEndTime} // show only HH:MM in input
                     onChange={handleEndTimeChange}
                   />
+                </div> */}
+                <div className="wd_table">
+                  <label htmlFor="time-range" className="mb-2">
+                    Working days & timing
+                  </label>
+
+                  <div className="table-responsive">
+                    <table className="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Day</th>
+                          <th>Active</th>
+                          <th style={{ width: 120 }}>Start</th>
+                          <th style={{ width: 120 }}>End</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {Object.keys(workingDays).map((day) => (
+                          <tr key={day}>
+                            <td>{day}</td>
+
+                            {/* Active Checkbox */}
+                            <td>
+                              <input
+                                type="checkbox"
+                                checked={workingDays[day].isActive}
+                                onChange={() => handleActiveToggle(day)}
+                              />
+                            </td>
+
+                            {/* Start Time */}
+                            <td>
+                              <input
+                                type="time"
+                                className="form-control"
+                                value={workingDays[day].openingTime}
+                                disabled={!workingDays[day].isActive}
+                                onChange={(e) =>
+                                  handleTimeChange(day, "openingTime", e.target.value)
+                                }
+                              />
+                            </td>
+
+                            {/* End Time */}
+                            <td>
+                              <input
+                                type="time"
+                                className="form-control"
+                                value={workingDays[day].closeingTime}
+                                disabled={!workingDays[day].isActive}
+                                onChange={(e) =>
+                                  handleTimeChange(day, "closeingTime", e.target.value)
+                                }
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+
+
               </div>
               {error && <p style={{ color: "red" }}>{error}</p>}
               <AuthBtn

@@ -1,6 +1,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* --toastify-color-progress-success: #cda442; */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -111,6 +112,10 @@ a {
   height: 20px;
 }
 
+.remember input[type="checkbox" i] {
+  background-color: #FFF !important;
+}
+
 .remember label,
 .remember a {
   color: #2f620b !important;
@@ -201,6 +206,7 @@ button.locationBtn span {
   border-radius: 8px;
   border: 1px solid#041e5e;
   width: 30%;
+  background-color: #FFF;
 }
 
 .date_picker input::placeholder {
@@ -254,7 +260,8 @@ button.locationBtn span {
   border-radius: 10px;
   border: 1px solid #041e5e;
   font-size: 17px;
-  color: #757575;
+  color: #000;
+  background: #FFF;
   resize: none;
   margin-bottom: 15px;
 }
@@ -269,6 +276,7 @@ button.locationBtn span {
   resize: none;
   margin-bottom: 15px;
   color: #000;
+  background-color: #FFF;
 }
 
 textarea::placeholder {
@@ -478,7 +486,7 @@ input::placeholder {
 
 .sidebar_container ul li {
   list-style: none;
-
+  text-align: start;
   position: relative;
   margin: 10px 0;
   transition: background-color 0.3s ease, transform 0.3s ease;
@@ -539,6 +547,7 @@ input::placeholder {
 .dashboard_user {
   display: flex;
   align-items: center;
+  text-align: start;
   gap: 15px;
 }
 
@@ -594,6 +603,7 @@ input::placeholder {
   height: 48px;
   border: 2px solid transparent;
   align-content: center;
+  white-space: nowrap;
 }
 
 .btntheme3:hover {
@@ -1421,6 +1431,12 @@ button.reset_btn svg {
   margin: 250px auto 0;
 }
 
+.notification_dialog {
+  margin-right: 30px;
+  margin-top: 110px;
+  margin-left: auto;
+}
+
 .noti_modal_container_footer {
   display: flex;
   align-items: center;
@@ -1435,6 +1451,21 @@ button.reset_btn svg {
   font-weight: 300;
   line-height: 22px;
   font-size: 14px;
+}
+
+.status_dialog .form-check .form-check-input {
+  float: right;
+  width: 3em;
+  height: 1.6em;
+}
+
+.status_dialog .form-switch {
+  padding-left: 0;
+}
+
+.status_dialog .form-check-input:checked {
+  background-color: #fdb71a;
+  border-color: #fdb71a;
 }
 
 .close_md {
@@ -2013,6 +2044,85 @@ button.hamburger {
 
 }
 
+.category-grid {
+  overflow-x: auto;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 16px;
+  padding-bottom: 50px;
+}
+
+.category-grid>div {
+  flex: 1 1 calc(20% - 16px);
+  /* 5 per row */
+  min-width: 220px;
+  max-width: 255px;
+}
+
+.wd_table td,
+.wd_table th {
+  padding: 5px 10px !important;
+}
+
+.businessForm3 {
+  max-width: 500px !important;
+}
+
+.wd_table th {
+  font-size: 14px !important;
+}
+
+.wd_table input {
+  height: 40px !important;
+}
+
+.wd_table input[type="checkbox"] {
+  height: 20px !important;
+}
+
+/* .Toastify__toast--info {
+  } */
+.Toastify__progress-bar--info {
+  background-color: #cda442 !important;
+
+}
+
+.Toastify__progress-bar--info .Toastify__toast-icon.Toastify--animate-icon.Toastify__zoom-enter svg {
+  fill: #cda442;
+}
+
+/* Remove default checkbox style */
+.user_profile_body input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+/* Style when checked */
+.user_profile_body input[type="checkbox"]:checked {
+  background-color: #cda442;
+  border-color: #cda442;
+}
+
+/* Optional: Add a checkmark */
+.user_profile_body input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 4px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -2051,6 +2161,10 @@ button.hamburger {
     padding: 0 0 0 30px;
   }
 
+  .sid_logOut {
+    padding-left: 30px;
+  }
+
   .about_sec,
   .up_timing {
     padding: 15px;
@@ -2058,6 +2172,7 @@ button.hamburger {
 
   .du_a {
     padding-left: 33px;
+    padding-right: 15px;
   }
 }
 
@@ -2180,7 +2295,7 @@ button.hamburger {
   .dashboard_panel h3 {
     font-size: 16px;
     font-weight: 700;
-    margin: 0;
+    margin: 0 0 10px 0;
     white-space: nowrap;
   }
 
@@ -2254,6 +2369,26 @@ button.hamburger {
 
   .sidebar_menu .sm_logo {
     margin: 0 auto;
+  }
+
+  .sid_logOut {
+    padding-top: 50px;
+    padding-left: 0;
+  }
+
+  .sid_logOut a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sid_logOut a img {
+    width: 33px;
+    height: 33px;
+    object-fit: contain;
+  }
+
+  .sid_logOut a div {
+    display: none;
   }
 
 }
@@ -2411,6 +2546,17 @@ button.hamburger {
 
 }
 
+@media only screen and (max-width: 576px) {
+
+  .businessForm3 {
+    max-width: 400px !important;
+  }
+
+  .wd_table {
+    width: 100%;
+  }
+}
+
 @media only screen and (max-width: 480px) {
   .dash_chart2 {
     margin-top: 80px;
@@ -2500,5 +2646,13 @@ button.hamburger {
   .dash_searc input {
     height: 40px;
     font-size: 12px;
+  }
+
+  .manage_order_head .mo_tabs {
+    max-width: 100%;
+  }
+
+  .sid_logOut {
+    padding-top: 30px;
   }
 }

@@ -7,9 +7,10 @@
       "@/components/*": ["src/components/*"],
       "@/hooks/*": ["src/hooks/*"],
       "@/pages/*": ["src/pages/*"],
+      "@/styles/*": ["src/styles/*"],
+      "@/lib/*": ["src/lib/*"],
       "@/images/*": ["public/images/*"],
       "@/fonts/*": ["public/fonts/*"],
-      "@/styles/*": ["public/styles/*"]
     }
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
-import "../../styles/auth.module.css";
-import styles from "../../styles/auth.module.css";
+import "@/styles/auth.module.css";
+import styles from "@/styles/auth.module.css";
 import { usePathname } from "next/navigation";
 import HeaderContext from "@/components/context/HeaderContext";
 import { useRouter } from "next/navigation";
@@ -26,12 +26,12 @@ export default function AuthLayout({ children, success, headTitle }) {
     otp: {
       title: "OTP",
       description:
-        "We have sent you an email containing a 6-digit verification code. Please enter the code to verify your identity",
+        "We have sent you an email containing a 4-digit verification code. Please enter the code to verify your identity",
     },
     otpverify: {
       title: "OTP",
       description:
-        "We have sent you an email containing a 6-digit verification code. Please enter the code to verify your identity",
+        "We have sent you an email containing a 4-digit verification code. Please enter the code to verify your identity",
     },
     reset: {
       title: "Reset Password",
@@ -76,7 +76,7 @@ export default function AuthLayout({ children, success, headTitle }) {
     const key = pathname.split("/").pop();
     return content[key] || {};
   }, [pathname]);
-
+  // console.log(header)
   // useLayoutEffect(() => {
   //   if (sessionStorage.getItem("token")) {
   //     // router.replace();
@@ -87,6 +87,8 @@ export default function AuthLayout({ children, success, headTitle }) {
   //     setIsLoaded(true);
   //   }
   // }, [pathname]);
+  console.log(pathname);
+
   return (
     <>
       <Head>
@@ -96,8 +98,10 @@ export default function AuthLayout({ children, success, headTitle }) {
         <div className={styles.auth_container}>
           <div className={styles.auth_image}></div>
           <div className={styles.auth_form_container}>
-            <div className={styles.auth_form}>
-              {/* {!isLoaded || success ? <SpinnerLoading /> : children} */}
+            <div
+              className={`${styles.auth_form} ${pathname == "/auth/createbussinessprofile3" ? "businessForm3" : ""
+                }`}
+            >
               {children}
             </div>
           </div>

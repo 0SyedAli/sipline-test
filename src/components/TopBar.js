@@ -8,10 +8,13 @@ import { useDispatch } from 'react-redux';
 import { triggerRefresh } from "src/lib/redux/store/slices/refreshSlice";
 import { useState } from "react";
 import { RiMenu3Line } from "react-icons/ri";
+import StatusUpdateModal from "./notificationModalCont/StatusModal";
 
 const TopBar = () => {
   const dispatch = useDispatch();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isNotfOpen, onOpen:onNotfOpen, onClose:onNotfClose } = useDisclosure();
+  const { isOpen: isStatusOpen, onOpen: onStatusOpen, onClose: onStatusClose } = useDisclosure();
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -48,6 +51,9 @@ const TopBar = () => {
             className={`top_menu d-flex align-items-center gap-3 ${menuOpen ? "open" : ""
               }`}
           >
+            <div onClick={onStatusOpen} className="btn btntheme3">
+              Update Status
+            </div>
             <button
               type="button"
               className="noti_btn"
@@ -61,7 +67,7 @@ const TopBar = () => {
                 height={25}
               />
             </button>
-            <div onClick={onOpen} className="btn btntheme3">
+            <div onClick={onNotfOpen} className="btn btntheme3">
               Add Category
             </div>
             <Link href="/dashboard/addproduct" className="btn btntheme3">
@@ -72,11 +78,16 @@ const TopBar = () => {
       </div>
       <AddCategory
         btntitle="Add now"
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isNotfOpen}
+        onClose={onNotfClose}
         onSuccess={() => dispatch(triggerRefresh())}
       />
       <NotificationModal />
+      <StatusUpdateModal
+        isOpen={isStatusOpen}
+        onClose={onStatusClose}
+        onSuccess={() => dispatch(triggerRefresh())}
+      />
     </>
   );
 };

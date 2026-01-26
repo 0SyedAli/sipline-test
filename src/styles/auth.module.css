@@ -22,7 +22,9 @@
   max-width: 400px;
   width: 100%;
 }
-
+.businessForm3 {
+  max-width: 600px;
+}
 .auth_form .form_head {
   text-align: center;
 }

@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { BsSearch, BsChevronLeft, BsChevronRight, BsBell, BsEye, BsCheck, BsX } from "react-icons/bs"
-import "../../styles/refund.css"
+import "@/styles/refund.css"
 import SpinnerLoading from "../SpinnerLoading"
 import { useRouter } from "next/navigation"
 

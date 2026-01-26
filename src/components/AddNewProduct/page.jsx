@@ -49,15 +49,15 @@ export const AddNewProduct = ({ title, btntitle }) => {
   const [shopId, setShopId] = useState("");
 
   const fileInputRef = useRef(null);
-  const refreshKey = useSelector((state) => state.refresh.refreshKey);
+  const refreshKey = useSelector((state) => state?.refresh?.refreshKey);
   const router = useRouter();
 
   // Fetch admin data
   useEffect(() => {
     const adminData = JSON.parse(sessionStorage.getItem("admin"));
     if (adminData?._id) {
-      setAdminId(adminData._id);
-      setShopId(adminData.shopId._id);
+      setAdminId(adminData?._id);
+      setShopId(adminData?.shopId?._id);
     } else {
       toast.error("Invalid admin data. Redirecting...");
       // router.push("/auth/add-services");
@@ -75,17 +75,21 @@ export const AddNewProduct = ({ title, btntitle }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/AllCategoriesByAdmin?adminId=${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/adminProfile?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
-        setCategory(response.data.data || []);
-        toast.success("Categories fetched successfully!");
+        setCategory(response?.data?.data?.categoryId || []);
+        // toast.success("Categories fetched successfully!", {
+        //   autoClose: 3000,
+        // });
+        console.log("Categories fetched successfully!");
+
       } else {
         toast.error(response?.data?.msg || "Failed to fetch categories.");
       }
     } catch (err) {
-      toast.error(err.message || "An error occurred while fetching categories.");
+      toast.error(err?.message || "An error occurred while fetching categories.");
     } finally {
       setLoading(false);
     }
@@ -120,7 +124,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
       formData.append("StockQuantity", stockQuantity);
       formData.append("discount", discount);
       formData.append("price", price);
-      formData.append("category", categoryId);
+      formData.append("categoryId", categoryId);
       formData.append("brandName", brandName);
       productImages.forEach((file) => formData.append("ProductImages", file));
 
@@ -132,15 +136,17 @@ export const AddNewProduct = ({ title, btntitle }) => {
       );
 
       if (response.data?.success) {
-        toast.success(response.data.msg || "Product added successfully!");
+        toast.success(response?.data?.msg || "Product added successfully!", {
+          autoClose: 3000,
+        });
         setError("");
         resetForm();
       } else {
-        toast.error(response.data?.msg || "Failed to add product.");
+        toast.error(response?.data?.msg || "Failed to add product.");
       }
     } catch (err) {
-      toast.error(err.response?.data?.msg || "An error occurred during submission.");
-      setError(err.response?.data?.msg || err.message);
+      toast.error(err?.response?.data?.msg || "An error occurred during submission.");
+      setError(err?.response?.data?.msg || err?.message);
     } finally {
       setIsLoading(false);
     }
@@ -258,7 +264,7 @@ export const AddNewProduct = ({ title, btntitle }) => {
                 </option>
                 {Array.isArray(category) && category.map((cat, index) => (
                   <option key={cat._id} value={cat._id}>
-                    {cat.categoryName}
+                    {cat.businessCatName}
                   </option>
                 ))}
               </select>

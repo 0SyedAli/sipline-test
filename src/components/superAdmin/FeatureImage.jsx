@@ -4,8 +4,8 @@ const defaultFeatureImage = "/images/default-avatar.png";
 
 export default function FeatureImage({ fImage }) {
   const [imgSrc, setImgSrc] = useState(
-    feature?.bannerImage
-      ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${feature?.bannerImage}`
+    fImage?.bannerImage
+      ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${fImage?.bannerImage}`
       : defaultFeatureImage
   );
 

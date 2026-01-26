@@ -18,10 +18,6 @@ const signinValidation = object().shape({
   email: string().email("Invalid email format").required("Email is required"),
   password: string()
     .min(6, "Password must be at least 6 characters")
-    // .matches(
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#.$!%*?&])/,
-    //   "Password must contain uppercase, lowercase, digit and special character"
-    // )
     .required("Password is required"),
 });
 

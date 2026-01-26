@@ -80,15 +80,23 @@ export default function LoginPage() {
         toast.success(msg || "Login successful!");
         setSuccess(true);
 
-        if (!profileCreated) {
-          // profileCreated is false
-          router.push("createprofile");
-        } else if (!shopCreated) {
+        // if (!profileCreated) {
+        //   // profileCreated is false
+        //   router.push("createprofile");
+        // } else if (!shopCreated) {
+        //   // shopCreated is false
+        //   router.push("createbussinessprofile");
+        // } else if (profileCreated && shopCreated) {
+        //   // Store token if successful
+
+        //   router.push("/dashboard");
+        // }
+
+        if (!shopCreated) {
           // shopCreated is false
           router.push("createbussinessprofile");
-        } else if (profileCreated && shopCreated) {
+        } else if (shopCreated) {
           // Store token if successful
-
           router.push("/dashboard");
         }
       } else {

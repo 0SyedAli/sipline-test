@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { BsStarFill, BsStarHalf, BsStar, BsClock, BsGeoAlt, BsInfoCircle } from "react-icons/bs"
-import "../../../../../../styles/shop.css"
+import "@/styles/shop.css"
 import SpinnerLoading from "@/components/SpinnerLoading"
 import { useRouter } from "next/navigation"
 const defaultShopImage = "/images/defaultBar.jpg"

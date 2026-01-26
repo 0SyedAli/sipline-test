@@ -41,7 +41,7 @@ function NotificationModal() {
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <div className="modal-dialog noti-modal-dialog">
+      <div className="modal-dialog noti-modal-dialog notification_dialog">
         <div className="modal-content">
           <div className="modal-body p-0">
             <div className="noti_modal_container_body">

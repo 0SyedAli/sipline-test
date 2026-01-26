@@ -51,13 +51,14 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/AllCategoriesByAdmin?adminId=${adminId}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}admin/adminProfile?adminId=${adminId}`
       );
 
       if (response?.data?.success) {
-        setCategory(response?.data?.data || []);
+        setCategory(response?.data?.data?.categoryId || []);
         setTimeout(() => {
-          toast.success("Categories fetched successfully!");
+          // toast.success("Categories fetched successfully!");
+          console.log("Categories fetched successfully!");
         }, 2000);
       }
     } catch (error) {
@@ -82,7 +83,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
         setStockQuantity(product.StockQuantity);
         setDiscount(product.discount);
         setPrice(product.price);
-        setCategoryId(product.category?._id || "");
+        setCategoryId(product.categoryId?._id || "");
         setBrandName(product.brandName || "");
 
         // Set existing images if available
@@ -94,7 +95,8 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
           );
         }
 
-        toast.success("Product details loaded!");
+        // toast.success("Product details loaded!");
+        console.log("Product details loaded!");
       }
     } catch (error) {
       console.error("Failed to fetch product:", error);
@@ -127,7 +129,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
     if (stockQuantity) formData.append("StockQuantity", stockQuantity);
     if (discount) formData.append("discount", discount);
     if (price) formData.append("price", price);
-    if (categoryId) formData.append("category", categoryId);
+    if (categoryId) formData.append("categoryId", categoryId);
     if (brandName) formData.append("brandName", brandName);
 
     // Only append images if new ones were selected
@@ -271,7 +273,7 @@ export const EditProduct = ({ btntitle, onClose, productId }) => {
                 </option>
                 {Array.isArray(category) && category.map((cat, index) => (
                   <option key={cat._id} value={cat._id}>
-                    {cat.categoryName}
+                    {cat.businessCatName}
                   </option>
                 ))}
               </select>

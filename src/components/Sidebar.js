@@ -20,7 +20,7 @@ const SideBar = () => {
       setAdminData(adminData);
     } else {
       console.error("User not found or missing '_id' property");
-      router.push("/auth/login"); 
+      router.push("/auth/login");
     }
   }, [router]);
 
@@ -28,11 +28,15 @@ const SideBar = () => {
     { href: "/dashboard", icon: "/images/li1.png", text: "Dashboard" },
     { href: "/dashboard/manage-orders", icon: "/images/li2.png", text: "Manage Orders" },
     { href: "/dashboard/manage-product", icon: "/images/li3.png", text: "Manage Products" },
+    { href: "/dashboard/manage-category", icon: "/images/li3.png", text: "Manage Category" },
     { href: "/dashboard/ratings", icon: "/images/li4.png", text: "Ratings" },
     { href: "/dashboard/transaction-history", icon: "/images/calendar-tick.png", text: "Transaction History" },
     { href: "/dashboard/discounts", icon: "/images/li6.png", text: "Discounts" },
+    // { href: "/dashboard/features", icon: "/images/calendar-tick.png", text: "Featured Ads" },
     { href: "/dashboard/privacy-policy", icon: "/images/li7.png", text: "Privacy Policy" },
     { href: "/dashboard/terms-&-condition", icon: "/images/li8.png", text: "Terms & Conditions" },
+    { href: "/dashboard/edit-profile", icon: "/images/profile.png", text: "Edit Profile" },
+    { href: "/dashboard/delete-account", icon: "/images/delete-account-icon.png", text: "Delete Account" },
     { href: "/auth/login?action=logout", icon: "/images/li9.png", text: "Log Out" },
   ];
 
@@ -40,12 +44,12 @@ const SideBar = () => {
     setActiveTab(pathname);
   }, [pathname]);
 
-const handleTabClick = (tab) => {
-  setLoading(true);
-  setActiveTab(tab);
-  setIsSidebarOpen(false); // Close sidebar on click
-  router.push(tab);
-};
+  const handleTabClick = (tab) => {
+    setLoading(true);
+    setActiveTab(tab);
+    setIsSidebarOpen(false); // Close sidebar on click
+    router.push(tab);
+  };
   const handleHover = (href) => {
     router.prefetch(href);
   };
@@ -64,7 +68,7 @@ const handleTabClick = (tab) => {
       </div>
       <div className={`sidebar_menu ${isSidebarOpen ? "open" : ""}`}>
         <Image src="/images/dashLogo.png" priority={false} className="sm_logo" alt="Logo" width={130} height={100} />
-        <button className="hamburger" style={{margin: "20px auto 0"}} onClick={toggleSidebar}>
+        <button className="hamburger" style={{ margin: "20px auto 0" }} onClick={toggleSidebar}>
           <RxCross2 />
         </button>
         <ul>
@@ -89,21 +93,21 @@ const handleTabClick = (tab) => {
             </li>
           ))}
         </ul>
-        <Link className="du_a" href="/dashboard/user-profile">
-          <div className="dashboard_user">
+        {/* <Link className="du_a" href="#!"> */}
+          <div className="dashboard_user ps-4">
             <Image
               width={40}
               height={40}
               src={
-                adminData?.profileImage
-                  ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${adminData?.profileImage}`
-                  : customer
+                adminData?.shopId?.shopImage
+                  ? `${process.env.NEXT_PUBLIC_IMAGE_URL}${adminData?.shopId?.shopImage}`
+                  : ""
               }
-              alt="User Avatar"
+              alt="Vendor Avatar"
             />
-            <p>{adminData?.fullName || "Unknown"}</p>
+            <p>{adminData?.shopId?.barName || "Unknown"}</p>
           </div>
-        </Link>
+        {/* </Link> */}
       </div>
 
     </div>

@@ -27,7 +27,8 @@ const SideBar2 = () => {
     { href: "/super-admin/dashboard/manage-orders", icon: "/images/li2.png", text: "Manage Orders" },
     { href: "/super-admin/dashboard/manage-bars", icon: "/images/li3.png", text: "Manage Bars" },
     { href: "/super-admin/dashboard/manage-refunds", icon: "/images/li4.png", text: "Manage Refunds" },
-    { href: "/super-admin/dashboard/manage-delete-accounts", icon: "/images/li4.png", text: "Manage Delete Accounts" },
+    { href: "/super-admin/dashboard/manage-delete-users-accounts", icon: "/images/li4.png", text: "User Delete Requests" },
+    { href: "/super-admin/dashboard/manage-delete-vendors-accounts", icon: "/images/li4.png", text: "Vendor Delete Requests" },
     { href: "/super-admin/dashboard/features", icon: "/images/calendar-tick.png", text: "Featured Ads" },
     { href: "/super-admin/dashboard/support", icon: "/images/calendar-tick.png", text: "Support" },
     { href: "/super-admin/dashboard/manage-category", icon: "/images/calendar-tick.png", text: "Manage Category" },
@@ -116,7 +117,9 @@ const SideBar2 = () => {
               height={24}
             />
           </span>
-          Log Out
+          <div>
+            Log Out
+          </div>
         </Link>
       </div>
     </div>

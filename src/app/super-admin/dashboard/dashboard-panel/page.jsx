@@ -122,7 +122,7 @@ const DashboardPanel = ({ activeTab }) => {
             <OverviewCards
               ovimg={img4}
               title="Total Customers"
-              price={stats?.totalBars ?? 0}
+              price={stats?.totalUsers ?? 0}
             />
           </div>
         </div>

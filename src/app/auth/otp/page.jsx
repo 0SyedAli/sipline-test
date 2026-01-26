@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
 import { useEffect, useState } from "react";
-import { setAdmin } from "../../../lib/redux/store/slices/multiStepFormSlice";
+import { setAdmin } from "@/lib/redux/store/slices/multiStepFormSlice";
 
 export default function Otp() {
   const router = useRouter();
@@ -40,68 +40,6 @@ export default function Otp() {
       setCode(code);
     }
   };
-
-  // const verifyOTP = async () => {
-
-  //   setIsLoading(true);
-  //   setError("");
-  //   setResendMessage("");
-
-  //   const requestData = {
-  //     email: email,
-  //     OTP: code,
-  //     signupToken: token,
-  //   };
-
-  //   try {
-  //     const response = await axios.post(
-  //       `${process.env.NEXT_PUBLIC_SERVER_URL}admin/verifyOTP`,
-  //       requestData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     const { accessToken } = response?.data;
-  //     // Check if response status is successful
-  //     if (response?.status === 200 || response?.status === 201) {
-  //       if (response?.data?.data) {
-  //         sessionStorage.setItem("admin", JSON.stringify(response?.data?.data));
-  //         sessionStorage.setItem("token", accessToken);
-  //         toast.success(response?.data?.msg || "OTP has been verified successfully!");
-  //         router.push("createprofile");
-  //       }
-  //       else {
-  //         toast.error(response?.data?.msg || "Invalid OTP");
-  //       }
-  //     } else {
-  //       // Handle unexpected success responses with non-2xx status codes
-  //       toast.error(response?.data?.msg || "Invalid OTP");
-  //       setError(response?.data?.msg || "Invalid OTP");
-  //       setSuccess(false);
-  //       setIsLoading(false); // Re-enable button on failure
-  //     }
-  //   } catch (error) {
-  //     toast.error(error.response?.data?.msg || "Invalid OTP");
-  //     setError(error?.response?.data?.message || error?.message || "invalid OTP");
-  //     setSuccess(false);
-  //     setIsLoading(false); // Re-enable button on error
-  //     // Log the error for debugging purposes
-  //     console.error("Error verifying OTP:", error);
-  //   }
-  // };
-
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (code.length === 4) {
-  //     verifyOTP();
-  //   } else {
-  //     setError("Please enter a valid 4-digit OTP.");
-  //   }
-  // };
-
 
   const verifyOTP = async () => {
 
@@ -143,7 +81,8 @@ export default function Otp() {
           sessionStorage.setItem("token", accessToken);
           // sessionStorage.removeItem("admin");
           // sessionStorage.removeItem("token");
-          router.push("createprofile");
+          // router.push("createprofile");
+          router.push("createbussinessprofile");
         } else {
           toast.error(response?.data?.msg || "Invalid OTP");
           setError(response?.data?.msg || "Invalid OTP");
