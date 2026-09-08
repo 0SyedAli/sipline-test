@@ -76,13 +76,9 @@ export default function Otp() {
           setSuccess(true);
           toast.success(response?.data?.msg || "OTP has been verified successfully!");
           setError(null);
-
-          sessionStorage.setItem("admin", JSON.stringify(response?.data?.data));
-          sessionStorage.setItem("token", accessToken);
-          // sessionStorage.removeItem("admin");
-          // sessionStorage.removeItem("token");
-          // router.push("createprofile");
-          router.push("createbussinessprofile");
+          sessionStorage.setItem("token", accessToken || "");
+          sessionStorage.setItem("admin", JSON.stringify(response?.data?.data || {}));
+          router.push(response?.data?.data?.onboardingUrl);
         } else {
           toast.error(response?.data?.msg || "Invalid OTP");
           setError(response?.data?.msg || "Invalid OTP");

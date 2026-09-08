@@ -41,6 +41,76 @@ export default function LoginPage() {
   }, []);
   const handleClick = () => setShow(!show);
 
+  // const handleLogin = async (e) => {
+  //   e.preventDefault();
+  //   setIsLoading(true); // Disable the button on submit
+
+  //   const requestData = {
+  //     email: email,
+  //     password: password,
+  //   };
+
+  //   try {
+  //     // Validate request data
+  //     await signinValidation.validate(requestData);
+
+  //     // Make API request
+  //     const { data } = await axios.post(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}admin/login`,
+  //       requestData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (data?.success) {
+  //       const { msg, accessToken, data: adminData } = data;
+
+  //       if (!adminData) {
+  //         throw new Error(msg || "Admin data not found");
+  //       }
+
+  //       const { profileCreated, shopCreated, chargesEnabled, payoutsEnabled, onboardingStatus } = adminData; // Destructure from adminData
+  //       sessionStorage.setItem("token", accessToken || "");
+  //       sessionStorage.setItem("admin", JSON.stringify(adminData || {}));
+  //       // Both true
+  //       toast.success(msg || "Login successful!");
+  //       setSuccess(true);
+  //       if (!shopCreated) {
+  //         // shopCreated is false
+  //         router.push("createbussinessprofile");
+  //       } else if (shopCreated) {
+  //         // Store token if successful
+  //         if (adminData.onboardingStatus === "incomplete") {
+  //           // Redirect to reauth page if onboarding is incomplete
+  //           router.push(`https://apiforapp.link/api/reauth/${adminData?._id}`);
+  //         } else if (adminData.onboardingStatus === "pending") {
+  //           // Show popup message if onboarding is pending
+  //           alert("Stripe connected but verification in process. Please keep an eye on your email inbox (and spam folder). No further action is required from you at this time.");
+  //         } else if (adminData.onboardingStatus === "completed") {
+  //           // Redirect to dashboard if onboarding is complete
+  //           router.push("/dashboard");
+  //         }
+  //       }
+  //     } else {
+  //       toast.error(data?.msg || "Login failed!");
+  //       throw new Error(data?.msg || "Login failed");
+  //     }
+
+  //     // old logic for handling
+  //   } catch (error) {
+  //     // Handle validation or request errors
+  //     // console.log(error);
+
+  //     setError(error?.response?.data?.msg || error?.message || "Login failed");
+  //     setSuccess(false);
+  //     setIsLoading(false); // Re-enable button on error
+  //   }
+  // };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true); // Disable the button on submit
@@ -73,42 +143,39 @@ export default function LoginPage() {
           throw new Error(msg || "Admin data not found");
         }
 
-        const { profileCreated, shopCreated } = adminData; // Destructure from adminData
+        const { profileCreated, shopCreated, chargesEnabled, payoutsEnabled, onboardingStatus } = adminData; // Destructure from adminData
         sessionStorage.setItem("token", accessToken || "");
         sessionStorage.setItem("admin", JSON.stringify(adminData || {}));
-        // Both true
+
         toast.success(msg || "Login successful!");
         setSuccess(true);
 
-        // if (!profileCreated) {
-        //   // profileCreated is false
-        //   router.push("createprofile");
-        // } else if (!shopCreated) {
-        //   // shopCreated is false
-        //   router.push("createbussinessprofile");
-        // } else if (profileCreated && shopCreated) {
-        //   // Store token if successful
-
-        //   router.push("/dashboard");
-        // }
-
-        if (!shopCreated) {
-          // shopCreated is false
-          router.push("createbussinessprofile");
-        } else if (shopCreated) {
-          // Store token if successful
-          router.push("/dashboard");
+        // Check onboardingStatus first
+        if (onboardingStatus === "incomplete") {
+          // Redirect to reauth page if onboarding is incomplete
+          router.push(`https://apiforapp.link/api/reauth/${adminData?._id}`);
+        } else if (onboardingStatus === "pending") {
+          // Show popup message if onboarding is pending
+          alert(
+            "Stripe connected but verification in process. Please keep an eye on your email inbox (and spam folder). No further action is required from you at this time."
+          );
+        } else if (onboardingStatus === "completed") {
+          // If onboarding is complete, check if shop is created
+          if (!shopCreated) {
+            // If shop is not created, redirect to business profile creation
+            router.push("createbussinessprofile");
+          } else {
+            // If both are true, redirect to dashboard
+            router.push("/dashboard");
+          }
         }
       } else {
         toast.error(data?.msg || "Login failed!");
         throw new Error(data?.msg || "Login failed");
       }
 
-      // old logic for handling
     } catch (error) {
       // Handle validation or request errors
-      // console.log(error);
-
       setError(error?.response?.data?.msg || error?.message || "Login failed");
       setSuccess(false);
       setIsLoading(false); // Re-enable button on error

@@ -294,7 +294,7 @@ export default function RefundRequestsPage() {
                           </ul>
                         </div> */}
                         <button
-                          className="btn btn-sm btn-outline-secondary border-0"
+                          className="btn btn-sm btn-outline-secondary "
                           onClick={() => viewRefundDetails(request._id)}
                         >
                           View Details

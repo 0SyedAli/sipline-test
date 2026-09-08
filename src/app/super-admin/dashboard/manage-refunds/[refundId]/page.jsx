@@ -61,36 +61,84 @@ export default function RefundDetailPage({ params }) {
     // Optional: Show success message
     alert("Refund processed successfully! Status updated to Refund.");
   };
+  // const updateRefundStatus = async (status) => {
+  //   try {
+  //     setUpdatingStatus(true)
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/updateRefundRequest`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({
+  //           refundId: refundId,
+  //           status: status,
+  //         }),
+  //       }
+  //     )
+
+  //     const result = await response.json()
+
+  //     if (result.success) {
+  //       setRefundData((prev) => ({ ...prev, status: status }))
+  //     } else {
+  //       setError("Failed to update refund status")
+  //     }
+  //   } catch (err) {
+  //     setError("Error updating status: " + err.message)
+  //   } finally {
+  //     setUpdatingStatus(false)
+  //   }
+  // }
   const updateRefundStatus = async (status) => {
     try {
-      setUpdatingStatus(true)
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/updateRefundRequest`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            refundId: refundId,
-            status: status,
-          }),
-        }
-      )
+      setUpdatingStatus(true);
+      let url;
+      let body;
 
-      const result = await response.json()
+      // Set URL and body based on the action (Approve or Reject)
+      if (status === "Approved") {
+        url = `${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/approveRefund`;
+        body = { refundId: refundId }; // Only need refundId for approve
+      } else if (status === "Rejected") {
+        url = `${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/updateRefundRequest`;
+        body = { refundId: refundId, status: "rejected" }; // Send status as rejected for reject
+      } else {
+        // Handle other statuses (like Refund or Completed)
+        url = `${process.env.NEXT_PUBLIC_SERVER_URL}superAdmin/updateRefundRequest`;
+        body = { refundId: refundId, status: status }; // Use status dynamically
+      }
+
+      // Call the respective API
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      const result = await response.json();
 
       if (result.success) {
-        setRefundData((prev) => ({ ...prev, status: status }))
+        setRefundData((prev) => ({ ...prev, status: status }));
+        toast.success(`Refund status updated to ${status}`);
       } else {
-        setError("Failed to update refund status")
+        // If the response contains a message, display it in the toast
+        const errorMsg = result.msg || "Error updating refund status";
+        setError(errorMsg); // Optionally set error in state to display in the UI
+        toast.error(errorMsg); // Show error message in the toast
       }
     } catch (err) {
-      setError("Error updating status: " + err.message)
+      toast.error(errorMsg); // Show error message in the toast
+      setError("Error updating status: " + err.message);
+      toast.error("Error occurred while updating refund status");
     } finally {
-      setUpdatingStatus(false)
+      setUpdatingStatus(false);
     }
-  }
+  };
+
 
   const getStatusIcon = (status) => {
     switch (status?.toLowerCase()) {
@@ -158,15 +206,15 @@ export default function RefundDetailPage({ params }) {
     )
   }
 
-  if (error) {
-    return (
-      <div className="page pt-4 px-0">
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      </div>
-    )
-  }
+  // if (error) {
+  //   return (
+  //     <div className="page pt-4 px-0">
+  //       <div className="alert alert-danger" role="alert">
+  //         {error}
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   if (!refundData) {
     return (
@@ -286,6 +334,25 @@ export default function RefundDetailPage({ params }) {
             <div className="card-body">
               <div className="d-grid gap-2">
                 {/* Pending → Approve + Reject */}
+                {/* {refundData.status === "Pending" && (
+                  <>
+                    <button
+                      className="btn btn-success"
+                      onClick={() => updateRefundStatus("Approved")}
+                      disabled={updatingStatus}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => updateRefundStatus("Rejected")}
+                      disabled={updatingStatus}
+                    >
+                      Reject
+                    </button>
+                  </>
+                )} */}
+
                 {refundData.status === "Pending" && (
                   <>
                     <button

@@ -1,65 +1,94 @@
 "use client";
-import OtpInput from "react-otp-input";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { AuthBtn } from "@/components/AuthBtn/AuthBtn";
-import { useRouter } from "next/navigation";
-import { useHeader } from "@/components/context/HeaderContext";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import SpinnerLoading from "@/components/Spinner/SpinnerLoading";
-import { useEffect, useState } from "react";
-import { setAdmin } from "@/lib/redux/store/slices/multiStepFormSlice";
 
-export default function Otp() {
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function StripeFailed() {
   const router = useRouter();
-  const header = useHeader();
-  const dispatch = useDispatch();
-  const [code, setCode] = useState("");
-  const [email, setEmail] = useState("");
-  const [token, setToken] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
-  const [resendMessage, setResendMessage] = useState(""); // Message for Resend OTP
+  const [adminId, setAdminId] = useState("");
 
   useEffect(() => {
-    const adminData = JSON.parse(sessionStorage.getItem("admin"));
-    const token = sessionStorage.getItem("token");
-    if (!adminData) {
-      router.push('/auth/signup');
-    } else {
-      setEmail(adminData || "");
-      setToken(token || "");
-    }
-  }, [router]);
+    const adminData = sessionStorage.getItem("admin");
 
+    if (adminData) {
+      try {
+        const parsedAdminData = JSON.parse(adminData);
+        setAdminId(parsedAdminData._id);
+      } catch (error) {
+        console.error("Error parsing admin data from sessionStorage:", error);
+      }
+    } else {
+      router.replace("/auth/login"); // Redirect if no admin data
+    }
+
+  }, []);
 
   return (
-    <>
-      {success ? (
-        <SpinnerLoading />
-      ) : (
-        <>
-          <div className="form_head">
-            <h2>{header?.title}</h2>
-            <p>{header?.description}</p>
-          </div>
-          <form className="auth_otp">
-            
-            <div>
-              {error && <p style={{ color: "red", textAlign: 'center' }}>{error}</p>}
-              <AuthBtn title="Next" type="button" onClick={handleSubmit} disabled={isLoading} />
-              <div className="resend_code">
-                <p>{`Code didn't receive?`}</p>
-                <h5 onClick={() => {
-                  router.push("signup")
-                }} style={{ cursor: "pointer" }}>Resend Code</h5>
-              </div>
-            </div>
-          </form>
-        </>
-      )}
-    </>
+    <div
+      className="card border-0 text-center"
+    >
+
+      {/* Error Icon */}
+      <div className="mb-4">
+        <div
+          className="mx-auto d-flex align-items-center justify-content-center rounded-circle"
+          style={{
+            width: "70px",
+            height: "70px",
+            backgroundColor: "#fdecea",
+            color: "#d93025",
+            fontSize: "32px",
+            fontWeight: "bold",
+          }}
+        >
+          ✕
+        </div>
+      </div>
+
+      {/* Heading */}
+      <h2 className="mb-2 fw-semibold text-danger">
+        Stripe Connection Failed
+      </h2>
+
+      {/* Description */}
+      <p className="text-muted mb-3">
+        We were unable to complete your Stripe account setup.
+      </p>
+
+      <p className="text-muted mb-4">
+        This may have happened due to incomplete information, a network issue,
+        or if the setup process was interrupted.
+      </p>
+
+      {/* Info Box */}
+      <div
+        className="alert alert-danger d-flex align-items-start text-start"
+        role="alert"
+      >
+        <span className="me-2">⚠️</span>
+        <div>
+          Please try connecting your Stripe account again.
+          Make sure all required details are filled in correctly.
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="d-grid gap-2 mt-3">
+        <button
+          className="btn btn-danger"
+          onClick={() => router.push(`https://apiforapp.link/api/reauth/${adminId}`)}
+        >
+          Retry Stripe Connection
+        </button>
+
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => router.push("/vendor/dashboard")}
+        >
+          Go to Dashboard
+        </button>
+      </div>
+
+    </div>
   );
 }

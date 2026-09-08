@@ -68,6 +68,10 @@ export default function AuthLayout({ children, success, headTitle }) {
       title: "Add Location Details",
       description: "Enter your details to register yourself",
     },
+    thankyou: {
+      title: "Thank you for completing your Stripe account setup.",
+      description: "Your information has been submitted successfully and is currently under review.",
+    },
   };
 
   const [isLoaded, setIsLoaded] = useState(false);
